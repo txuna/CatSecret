@@ -1,0 +1,121 @@
+/* Global */
+
+:root {
+    /* Color */
+    --color-white: #ffffff;
+    --color-light-white: #fdfffb;
+    --color-dark-white: #bdbdbd;
+    --color-pink: #fe918d;
+    --color-dark-pink: #ff6863;
+    --color-middle-grey: #949292;
+    --color-dark-grey: #4d4d4d;
+    --color-grey: #616161;
+    --color-light-grey: #7c7979;
+    --color-blue: #73aace;
+    --color-yellow: #fff7d1;
+    --color-orange: #feb546;
+    --color-black: #000000;
+    --color-red-wine: #9C344C;
+    --color-pink-white: #FADBD8;
+    --color-white-red-wine: #F27391;
+    --color-purple: #6757A5;
+    --color-light-purple: #d8d2f0;
+    --color-middle-purple: #4A3E79;
+    --color-dark-purple: #4B3A8D;
+    --color-navy:#283747;
+    /* Font Size */
+    --font-large: 48px;
+    --font-medium: 28px;
+    --font-regular: 18px;
+    --font-small: 16px;
+    --font-micro: 14px;
+    /* Font weight */
+    --weight-bold: 700;
+    --weight-semi-bold: 600;
+    --weight-regular: 400;
+    /* Size */
+    --size-bolder-radius: 4px;
+    /* Animation */
+    --animation-duration: 300ms;
+}
+/*box-sizing은 박스의 크기를 어떤 것을 기준으로 계산할지를 정하는 속성입니다.*/
+
+* {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    cursor: default;  
+    height:100vh; 
+}
+
+a {
+    text-decoration: none;
+}
+
+#container{
+    display:flex; 
+    justify-content: center;
+    align-items: center;
+    height:100%;
+}
+
+.terminal{
+    width: 500px; 
+    height: 500px; 
+    background: black;
+    margin:auto;
+    padding: 12px;
+    display:flex; 
+    flex-direction: column;
+    overflow-y:scroll;
+}
+
+.cursor{
+    margin-top:12px;
+}
+
+.input{
+    display:flex;
+}
+
+.input span{
+    color: var(--color-white);
+    font-size: 14px;
+}
+
+.input input[type="text"]{
+    border:none;
+    background:transparent;
+    color:white;
+    font-size:14px;
+    width:60%;
+}
+
+.input input:focus{
+    outline:none;
+}
+
+
+.terminal ul{
+    display:flex; 
+    flex-direction: column;
+    padding:0px;
+    margin:0px;
+}
+
+.terminal ul li{
+    list-style: none;
+    color:white;
+}
+
+.terminal ul li span{
+    color:white;
+    font-size: 14px;
+}
+
+
+
