@@ -1,4 +1,7 @@
-class Game{
+import {OS} from './os.js'
+import {Terminal} from './terminal.js'
+
+export class Game{
     constructor(){
         this.os = new OS() 
         this.terminal = new Terminal()
@@ -13,7 +16,7 @@ class Game{
     execute(){
         if(this.terminal.command.value === '') return 
         
-        let output = this.os.execute()
+        let output = this.os.execute(this.terminal.command.value)
         let msg = {
             'is_command' : true, 
             'command' : this.terminal.command.value, 
@@ -32,6 +35,9 @@ class Game{
 }
 
 const game = new Game()
+console.log(game)
+// DEBUG!
+window.game = game 
 
 function animate(){
     requestAnimationFrame(animate)

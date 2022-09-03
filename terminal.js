@@ -1,5 +1,5 @@
 
-class Terminal{
+export class Terminal{
     constructor(){
         this.term = document.querySelector(".terminal") 
         this.output_list = document.querySelector(".terminal ul")
