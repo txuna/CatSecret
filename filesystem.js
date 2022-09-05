@@ -35,6 +35,8 @@ export class FileSystem{
         if(this.root.hasFolder("var")){
             let folder = this.root.searchFolder("var")
             folder.addFolder(new Folder("log"))
+            folder = folder.searchFolder("log")
+            folder.addFile(new File("auth.log", '[Encrypted!]'))
         }
     }    
 }
@@ -51,7 +53,11 @@ class FileStat{
     }
 }
 
-class Folder extends FileStat{
+/**
+ * Folder Class 
+ * fname 생성시 특수문자, _, / 등 replace 처리 필요
+ */
+export class Folder extends FileStat{
     /**
      * 
      * @param {string} fname 폴더 이름 
@@ -64,13 +70,13 @@ class Folder extends FileStat{
         this.files = [] 
     }
 
-    addFolder(file){
-        this.folders.push(file)
+    addFolder(folder){
+        this.folders.push(folder)
         this.count+=1
     }
 
-    addFile(folder){
-        this.files.push(folder)
+    addFile(file){
+        this.files.push(file)
         this.count+=1
     }
 
@@ -78,12 +84,14 @@ class Folder extends FileStat{
         for(let i=0; i<this.folders.length; i++){
             if(this.folders[i].name == fname) return this.folders[i]
         }
+        return null
     }
 
     searchFile(fname){
         for(let i=0;i<this.files.length; i++){
             if(this.files[i].name == fname) return this.files[i]
         }
+        return null
     }
 
     hasFile(fname){
@@ -101,7 +109,7 @@ class Folder extends FileStat{
     }
 }
 
-class File extends FileStat{
+export class File extends FileStat{
     /**
      * 
      * @param {string} fname 파일 이름  

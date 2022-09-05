@@ -26,15 +26,18 @@ export class OS{
 
     /**
      * 
-     * @param {string} command 명령어
+     * @param {string} command 명령어 문자열 
+     * @returns 명령어의 수행결과 반환
      */
     execute(command){
+        let result 
         if(this.isConncted){
-            this.connectedComputer.execute(command)
+            result = this.connectedComputer.execute(command)
         }else{
-            this.thisComputer.execute(command)
+            result = this.thisComputer.execute(command)
         }
-        return `test.c\u2003.bash_history\u2003README.md`
+        return result
+        //return `test.c\u2003.bash_history\u2003README.md`
     }
 
     update(){

@@ -80,6 +80,8 @@ a {
 
 .input{
     display:flex;
+    margin:0px;
+    
 }
 
 .input span{

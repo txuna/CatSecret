@@ -35,7 +35,6 @@ export class Game{
 }
 
 const game = new Game()
-console.log(game)
 // DEBUG!
 window.game = game 
 
