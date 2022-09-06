@@ -47,48 +47,44 @@ export class Commander{
     }
 
     pwd(){
-        return this.computer.currentPath.name
+        return this.computer.getFullPathAtDepth()
+        //return this.computer.currentPath.name
+    }
+
+    ifconfig(){ 
+        //\u2424
+        return `eth0:\u2003 flags=4163<UP, BROADCAST, RUNNING, MULTICAST> mtu 1500
+        inet ${this.computer.interface.ip} netmask 255.255.255.0
+        ether ${this.computer.interface.mac} txqueuelen 1000 (Ethernet)`
     }
 
     /**
      * 
-     * @param {string} argv 변경할 디렉토리 PATH 
+     * @param {string} path 변경할 디렉토리 PATH 
      * path가 존재하는 주소인지
      * path가 파일이 아닌 폴더인지 
      * path에 접근가능한 권한을 가지고 있는지 
      * argv가 상대주소인지 절대주소인지 확인
      * argv가 undefined일 경우 자신의 home path로 이동
+     * navigationPath를 이용해서 이동경로 추적 
+     * 권한 체크 필요
      */
-    cd(argv){
-        let tmpRoot = this.computer.currentPath
-        let pathList = undefined
-        // 최상위 경로일 경우
-        if(argv[0] === '/' && argv.length === 1){
-            tmpRoot = this.computer.fileSystem.root
-        }else{
-            // 절대 주소 
-            if(argv[0] === '/'){
-                // '/' 삭제
-                pathList = argv.split('/').slice(1)  
-            }
-            // 상대 주소
-            else{
-                pathList = argv.split('/')
-            }
-            for(let i=0;i<pathList.length;i++){
-                if(tmpRoot.hasFolder(pathList[i])){
-                    tmpRoot = tmpRoot.searchFolder(pathList[i])
-                }else{
-                    return `cd\u2003can not found path: ${argv}`
-                }
-            }
+    cd(path){
+        let tmpNavigation = this.computer.getFolderNavigationFromPath(path)
+        if(tmpNavigation == null){
+            return `cd: not found directory '${path}'`
         }
-        
-        this.computer.currentPath = tmpRoot
+        /*
+            if(!this.computer.checkPermission(tmpNavigation)){
+                return `cd: do not have permission ${path}`
+            }
+        */
+        this.computer.navigationPath = tmpNavigation
+        this.computer.currentPath = this.computer.getFolderAtDepth()
         return ''
     }
     
-    cat(argv){
+    cat(path){
 
     }
 
