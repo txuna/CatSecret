@@ -1,7 +1,9 @@
 import {ALIGN_SIZE} from './config.js'
-import {READ_BIT, WRITE_BIT} from './config.js'
 /**
  * 컴퓨터의 파일시스템을 구성하는 클래스 폴더와 파일로 구성
+ * cd의 경우 x 비트 필수 
+ * ls의 경우 r 비트 
+ * touch의 경우 w 비트
  */
 export class FileSystem{
     /**
@@ -9,7 +11,7 @@ export class FileSystem{
      * @param {bool}} value 파일시스템의 초기 구성이 필요한지에 대한 인자 
      */
     constructor(value){
-        this.root = new Folder("/", 'root', 'rw', 'r-')
+        this.root = new Folder("/", 'root', 'rwx', 'r-x')
         this.needInit = value
         
         this.init()
@@ -21,22 +23,22 @@ export class FileSystem{
         if(!this.needInit) return 
 
         // 일반적인 컴퓨터의 경우 
-        this.root.addFolder(new Folder("var", 'root', 'rw', 'r-'))
-        this.root.addFolder(new Folder("home", 'root', 'rw', 'r-'))
-        this.root.addFolder(new Folder("root", 'root', 'rw', 'r-'))
-        this.root.addFolder(new Folder("etc", 'root', 'rw', 'r-'))
-        this.root.addFolder(new Folder("bin", 'root', 'rw', 'r-'))
+        this.root.addFolder(new Folder("var", 'root', 'rwx', 'r-x'))
+        this.root.addFolder(new Folder("home", 'root', 'rwx', 'r-x'))
+        this.root.addFolder(new Folder("root", 'root', 'rwx', 'r-x'))
+        this.root.addFolder(new Folder("etc", 'root', 'rwx', 'r-x'))
+        this.root.addFolder(new Folder("bin", 'root', 'rwx', 'r-x'))
 
         if(this.root.hasFolder("root")){
             let folder = this.root.searchFolder("root")
-            folder.addFile(new File("README.md", "Hello World!", 'root', 'rw', 'r-'))
+            folder.addFile(new File("README.md", "Hello World!", 'root', 'rwx', 'r-x'))
         }
 
         if(this.root.hasFolder("var")){
             let folder = this.root.searchFolder("var")
-            folder.addFolder(new Folder("log", 'root', 'rw', 'r-'))
+            folder.addFolder(new Folder("log", 'root', 'rwx', 'r-x'))
             folder = folder.searchFolder("log")
-            folder.addFile(new File("auth.log", '[Encrypted!]', 'root', 'rw', '--'))
+            folder.addFile(new File("auth.log", '[Encrypted!]', 'root', 'rwx', '--x'))
         }
     }    
 }
@@ -68,6 +70,16 @@ export class Folder extends FileStat{
         this.count = 0
         this.folders = []
         this.files = [] 
+    }
+
+    removeFolder(folder){
+        let index = this.folders.indexOf(folder)
+        this.folders.splice(index, 1)
+    }
+
+    removeFile(file){
+        let index = this.files.indexOf(file)
+        this.files.splice(index, 1)
     }
 
     addFolder(folder){

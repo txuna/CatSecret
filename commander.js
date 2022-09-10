@@ -159,7 +159,7 @@ export class Commander{
             return `cd: '${path}': Cannot found directory`
         }
 
-        if(!this.computer.verifyPermissionFromNavigation(tmpNavigation, 'r')){
+        if(!this.computer.verifyPermissionFromNavigation(tmpNavigation, 'x')){
             return `cd: '${path}': Permission denied`
         }
 
@@ -187,8 +187,32 @@ export class Commander{
 
     }
 
-    rm(){
+    // File 삭제 
+    rm(fname){
+        let folder = this.computer.currentPath 
 
+        if(!folder.hasFile(fname)){
+            return `rm: '${fname}': Cannot found file`
+        }   
+        const file = folder.searchFile(fname)
+
+        if(!this.computer.removeFile(file)){
+            return `rm: '${fname}': Permission denied`
+        }
+        return 'Successfully remove file'
+    }
+
+    // 폴더 삭제
+    rmdir(fname){
+        let currentfolder = this.computer.currentPath
+        if(!currentfolder.hasFolder(fname)){
+            return `rm: '${fname}': Cannot found folder`
+        }   
+        const folder = currentfolder.searchFolder(fname)
+        if(!this.computer.removeFolder(folder)){
+            return `rmdir: '${fname}': Permission denied`
+        }
+        return 'Successfully remove folder'
     }
 
     // 현재폴더에 빈 폴더 생성 

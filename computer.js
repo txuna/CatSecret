@@ -90,8 +90,38 @@ export class Computer{
 
     }
 
-    removeFile(){
+    /**
+     * 해당 파일을 현재 폴더에서 삭제한다. 
+     * 해당 파일의 w 권한 확인
+     * @param {File} file 삭제하려는 파일 
+     */
+    removeFile(file){
+        const folder = this.currentPath
+        if(!this.verifyPermissionAtFolder(folder, 'w')){
+            return false
+        }
+        if(!this.verifyPermissionAtFile(file, 'w')){
+            return false
+        }
+        
+        folder.removeFile(file)
+        return true
+    }
 
+    /**
+     * 
+     * @param {Folder} folder 삭제하려는 폴더
+     */
+    removeFolder(folder){
+        const currentFolder = this.currentPath
+        if(!this.verifyPermissionAtFolder(currentFolder, 'w')){
+            return false
+        }
+        if(!this.verifyPermissionAtFolder(folder, 'w')){
+            return false
+        }
+        currentFolder.removeFolder(folder)
+        return true
     }
 
     /**
@@ -274,9 +304,15 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+            case 'rmdir':
+                return this.commander.rmdir(argv[0])
+
+            case 'rm':
+                return this.commander.rm(argv[0])
+
             case 'mkdir':
                 return this.commander.mkdir(argv[0])
-                
+
             case 'touch':
                 return this.commander.touch(argv[0])
 

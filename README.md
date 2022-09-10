@@ -12,8 +12,8 @@
 - [ ] passwd
 - [X] mkdir 
 - [X] touch 
-- [ ] rm 
-- [ ] rmdir 
+- [X] rm 
+- [X] rmdir 
 - [ ] find 
 
 

@@ -9,7 +9,7 @@ class Service{
     constructor(comp, fname){
         this.computer = comp 
         this.serviceName = fname
-        this.computer.fileSystem.root.addFolder(new Folder(this.serviceName, 'root', 'rw', 'r-'))
+        this.computer.fileSystem.root.addFolder(new Folder(this.serviceName, 'root', 'rwx', 'r-x'))
         // root는 해당 Daemon Service가 접근할 수 있는 최상위 Directory
         this.root = this.computer.fileSystem.root.searchFolder(this.serviceName)
     }
