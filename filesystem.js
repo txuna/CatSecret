@@ -38,7 +38,8 @@ export class FileSystem{
             let folder = this.root.searchFolder("var")
             folder.addFolder(new Folder("log", 'root', 'rwx', 'r-x'))
             folder = folder.searchFolder("log")
-            folder.addFile(new File("auth.log", '[Encrypted!]', 'root', 'rwx', '--x'))
+            folder.addFile(new File("auth.log", '', 'root', 'rwx', 'r--'))
+            folder.addFile(new File('history.log', '', 'root', 'rwx', 'r--'))
         }
     }    
 }
@@ -147,5 +148,14 @@ export class File extends FileStat{
         super(fowner, fownerbit, fotherbit, fdata.length * ALIGN_SIZE)
         this.name = fname
         this.data = fdata
+    }
+
+    writeData(fdata){
+        this.data += `${fdata}\n`
+        this.size = this.data.length * ALIGN_SIZE
+    }
+
+    readData(){
+        return this.data
     }
 }

@@ -3,7 +3,7 @@ import {FileSystem} from './filesystem.js'
 import {Commander} from './commander.js'
 import {MailService, MissionService} from './service.js'
 import {User} from './user.js'
-
+import {Log} from './log.js'
 /**
  * 명령어 실행 및 컴퓨터 환경 구성
  */
@@ -21,6 +21,8 @@ export class Computer{
         this.users = []
         this.logOnUser = undefined  
         this.history = []
+        this.log = undefined
+        this.connectedIP = undefined
         
         this.load(node)
     }
@@ -47,6 +49,12 @@ export class Computer{
     }
 
     load(node){
+        // log init 
+        let folder = this.fileSystem.root.searchFolder('var')
+        folder = folder.searchFolder('log')
+        this.log = new Log(folder)
+
+        // network init
         this.interface = node.interface 
 
         // load port 
@@ -79,7 +87,7 @@ export class Computer{
         if(!this.verifyPermissionAtFile(file, 'r')){
             return null
         }
-        return file.data
+        return file.readData()
     }
 
     /**
@@ -154,6 +162,8 @@ export class Computer{
                     return false
                 }
             }else{
+                // root라면
+                if(user.uid == 1000) return true 
                 if(!folder.otherbit.includes(type)){
                     return false
                 }
@@ -177,6 +187,8 @@ export class Computer{
                 return false
             }
         }else{
+            // root라면
+            if(user.uid == 1000) return true 
             if(!folder.otherbit.includes(type)){
                 return false
             }
@@ -199,6 +211,8 @@ export class Computer{
                 return false
             }
         }else{
+            // root라면
+            if(user.uid == 1000) return true 
             if(!file.otherbit.includes(type)){
                 return false
             }
