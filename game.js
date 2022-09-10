@@ -43,6 +43,7 @@ export class Game{
         }
         this.terminal.writeTerminal(msg)
 
+        // connect 명령어시 해당 컴퓨터가 연결되었는지에 따라 다시 체크
         computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
         this.terminal.computer.innerText = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}] #`
     }
