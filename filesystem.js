@@ -9,7 +9,7 @@ export class FileSystem{
      * @param {bool}} value 파일시스템의 초기 구성이 필요한지에 대한 인자 
      */
     constructor(value){
-        this.root = new Folder("/")
+        this.root = new Folder("/", 'root', 'rw', 'r-')
         this.needInit = value
         
         this.init()
@@ -36,7 +36,7 @@ export class FileSystem{
             let folder = this.root.searchFolder("var")
             folder.addFolder(new Folder("log", 'root', 'rw', 'r-'))
             folder = folder.searchFolder("log")
-            folder.addFile(new File("auth.log", '[Encrypted!]', 'root', 'rw', 'r-'))
+            folder.addFile(new File("auth.log", '[Encrypted!]', 'root', 'rw', '--'))
         }
     }    
 }
@@ -80,6 +80,10 @@ export class Folder extends FileStat{
         this.count+=1
     }
 
+    /**
+     * 
+     * @param {String} fname 얻으려는 폴더이름
+     */
     searchFolder(fname){
         for(let i=0; i<this.folders.length; i++){
             if(this.folders[i].name == fname) return this.folders[i]
@@ -87,6 +91,10 @@ export class Folder extends FileStat{
         return null
     }
 
+    /**
+     * 
+     * @param {String} fname 얻으려는 파일이름 
+     */
     searchFile(fname){
         for(let i=0;i<this.files.length; i++){
             if(this.files[i].name == fname) return this.files[i]
@@ -94,6 +102,10 @@ export class Folder extends FileStat{
         return null
     }
 
+    /**
+     * 
+     * @param {String} fname 찾으려는 파일이름 
+     */
     hasFile(fname){
         for(let i=0;i<this.files.length; i++){
             if(this.files[i].name == fname) return true
@@ -101,6 +113,10 @@ export class Folder extends FileStat{
         return false
     }
 
+    /**
+     * 
+     * @param {String} fname 찾으려는 폴더이름 
+     */
     hasFolder(fname){
         for(let i=0; i<this.folders.length; i++){
             if(this.folders[i].name == fname) return true

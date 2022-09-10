@@ -23,7 +23,6 @@ export class Terminal{
         if(msg['is_command']){
             let input_div = document.createElement('div')
             let name_span = document.createElement("span")
-            name_span.innerText = '[tuuna@localhost ~]# '
             name_span.innerText = `${msg['computer']}# `
             let command_span = document.createElement('span')
             command_span.innerText = msg['command']

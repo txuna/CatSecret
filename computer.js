@@ -76,6 +76,9 @@ export class Computer{
      * @param {File} file 열람할 파일  
      */
     readFile(file){
+        if(!this.verifyPermissionAtFile(file, 'r')){
+            return null
+        }
         return file.data
     }
 
@@ -92,11 +95,85 @@ export class Computer{
     }
 
     /**
-     * 경로까지의 권한 체크
+     * 경로까지의 권한 체크 - 현재 logOnUser로 확인
      * @param {Array} navigation currentPath에서 부터의 경로 인덱스 배열 
+     * @param {String} type read할것인지 write할것인지
+     * root의 경우(1000) 상위 권한
+     * 폴더 소유주와 현재 로그인된 계정 확인 다르다면 other로 체크
+     * Folder만 가능
      */
-    checkPermission(navigation){
+    verifyPermissionFromNavigation(navigation, type){
+        let folder = this.fileSystem.root 
+        let user = this.getUser(this.logOnUser) 
+        if(user == null){
+            return false
+        }
+        if(folder.owner == user.name){
+            if(!folder.ownerbit.includes(type)){
+                return false
+            }
+        }else{
+            if(!folder.otherbit.includes(type)){
+                return false
+            }
+        }
+        for(const element of navigation){
+            folder = folder.folders[element]
+            if(folder.owner == user.name){
+                if(!folder.ownerbit.includes(type)){
+                    return false
+                }
+            }else{
+                if(!folder.otherbit.includes(type)){
+                    return false
+                }
+            }
+        }
+        return true
+    }
 
+    /**
+     * 주어진 폴더객체의 권한 확인
+     * @param {Folder} folder 권한 확인하려는 폴더 객체  
+     * @param {String} type write or read 
+     */
+    verifyPermissionAtFolder(folder, type){
+        let user = this.getUser(this.logOnUser)
+        if(user == null){
+            return false
+        }
+        if(folder.owner == user.name){
+            if(!folder.ownerbit.includes(type)){
+                return false
+            }
+        }else{
+            if(!folder.otherbit.includes(type)){
+                return false
+            }
+        }
+        return true
+    }
+
+    /**
+     * 작업하려는 파일에 대해 권한을 체크한다. 
+     * @param {File} file 작업하려는 File 
+     * @param {String} type read or write bit 
+     */
+    verifyPermissionAtFile(file, type){
+        let user = this.getUser(this.logOnUser)
+        if(user == null){
+            return false
+        }
+        if(file.owner == user.name){
+            if(!file.ownerbit.includes(type)){
+                return false
+            }
+        }else{
+            if(!file.otherbit.includes(type)){
+                return false
+            }
+        }
+        return true
     }
 
     getFullPathAtDepth(){
@@ -197,6 +274,12 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+            case 'mkdir':
+                return this.commander.mkdir(argv[0])
+                
+            case 'touch':
+                return this.commander.touch(argv[0])
+
             case "id":
                 return this.commander.id()
                 

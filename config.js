@@ -70,5 +70,35 @@ export const computerNodeList = [
                 uid : 1002
             }
         ]
+    },
+    {
+        interface : {
+            ip : '72.38.171.9',
+            mac : 'C2:F4:5E:E1:AC:F8', 
+        },
+        ports : [
+            {
+                num : 22, 
+                status : true
+            },{
+                num : 3306,
+                status : true
+            }
+        ],
+        users : [
+            {
+                name : 'troy',
+                password : 'troy',
+                uid : 1001
+            },{
+                name : 'root',
+                password : 'root1234', 
+                uid : 1000
+            },{
+                name : 'guest',
+                password : 'guest',
+                uid : 1002
+            }
+        ]
     }
 ]

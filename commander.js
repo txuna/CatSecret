@@ -1,5 +1,6 @@
 import {Computer} from './computer.js'
 import { User } from './user.js'
+import { File, Folder } from './filesystem.js'
 
 /**
  *  컴퓨터에 존재하는 명령어를 실행하는 클래스
@@ -45,7 +46,6 @@ export class Commander{
             this.computer.logOnUser = uname
             return `Successfully login ${uname}`
         }else{
-            console.log('fail')
             return `Invalid User ${uname}`
         }
     }
@@ -57,7 +57,7 @@ export class Commander{
         }
         output += 'network\u2003\u2003\u2003status\n'
         this.os.networkNodes.forEach( node => {
-            output += `${node.interface.ip}\u2003\u2003on`
+            output += `${node.interface.ip}\u2003\u2003on\n`
         })
         return output
     }
@@ -78,7 +78,7 @@ export class Commander{
             }
         }
         if(!flag){
-            return `${ip} doesn't exist network!`
+            return `connect: '${ip}': doesn't exist network!`
         }else{
             return `Successfully Connect! ${ip}`
         }
@@ -95,10 +95,13 @@ export class Commander{
         }
     }
     
+    //  보려는 currentPath가 로그인된 권한으로 읽을 수 있는지 확인
     ls(){
         let folder = this.computer.currentPath
         let output = ''
-
+        if(!this.computer.verifyPermissionAtFolder(folder, 'r')){
+            return `ls: ${folder.name}: Permission denied`
+        }
         folder.folders.forEach( f => {
             output += `${f.name}\u2003`
         })
@@ -113,6 +116,10 @@ export class Commander{
         let folder = this.computer.currentPath 
         let output = ''
         
+        if(!this.computer.verifyPermissionAtFolder(folder, 'r')){
+            return `ls: ${folder.name}: Permission denied`
+        }
+
         folder.folders.forEach( f => {
             output += `${f.ownerbit} ${f.otherbit} ${f.owner} ${f.size} ${f.createAt} ${f.name}\n`
         })
@@ -149,31 +156,31 @@ export class Commander{
     cd(path){
         let tmpNavigation = this.computer.getFolderNavigationFromPath(path)
         if(tmpNavigation == null){
-            return `cd: not found directory '${path}'`
+            return `cd: '${path}': Cannot found directory`
         }
-        /*
-            if(!this.computer.checkPermission(tmpNavigation)){
-                return `cd: do not have permission ${path}`
-            }
-        */
+
+        if(!this.computer.verifyPermissionFromNavigation(tmpNavigation, 'r')){
+            return `cd: '${path}': Permission denied`
+        }
+
         this.computer.navigationPath = tmpNavigation
         this.computer.currentPath = this.computer.getFolderAtDepth()
         return ''
     }
     
     cat(filename){
-        let flag = false
         let folder = this.computer.currentPath 
-        for(const file of folder.files){
-            if(filename == file.name){
-                console.log(file)
-                return this.computer.readFile(file)
-            }
+
+        if(!folder.hasFile(filename)){
+            return `cat: '${filename}': Cannot found file`
         }
-        if(!flag){
-            return `cat: not found file '${filename}'`
+        const file = folder.searchFile(filename)
+        let output = this.computer.readFile(file)
+        if(output == null){
+            return `cat: '${filename}': Permission denied`
+        }else{
+            return output
         }
-        return output
     }
 
     ps(){
@@ -184,12 +191,36 @@ export class Commander{
 
     }
 
-    mkdir(){
+    // 현재폴더에 빈 폴더 생성 
+    mkdir(fname){
+        let currentFolder = this.computer.currentPath
+        if(!this.computer.verifyPermissionAtFolder(currentFolder, 'w')){
+            return `mkdir: '${fname}': Permission denied`
+        }
 
+        if(currentFolder.hasFolder(fname)){
+            return `mkdir: '${fname}': Already Exist`
+        }
+
+        const user = this.computer.logOnUser
+        const folder = new Folder(fname, user, 'rw', 'r-')
+        currentFolder.addFolder(folder)
+        return `Successfully made new folder!`
     }
 
-    touch(){
-
+    // 현재 폴더에 빈 파일 생성 
+    touch(filename){
+        const folder = this.computer.currentPath 
+        if(!this.computer.verifyPermissionAtFolder(folder, 'w')){
+            return `touch: '${filename}': Permission denied`
+        }
+        if(folder.hasFile(filename)){
+            return `touch: '${filename}': Already Exist`
+        }
+        const user = this.computer.logOnUser
+        const file = new File(filename, '', user, 'rw', 'r-')
+        folder.addFile(file)
+        return `Successfully made new file!`
     }
 
     mv(){
