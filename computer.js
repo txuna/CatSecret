@@ -2,27 +2,66 @@ import {LOW_SECURITY, MIDDLE_SECURITY, HIGH_SECURITY} from './config.js'
 import {FileSystem} from './filesystem.js'
 import {Commander} from './commander.js'
 import {MailService, MissionService} from './service.js'
+import {User} from './user.js'
 
 /**
  * 명령어 실행 및 컴퓨터 환경 구성
  */
 export class Computer{
-    constructor(){
-        this.interface = {
-            ip : '127.0.0.1',
-            mac : 'AF:13:BF:38:37:C7'
-        }
+    constructor(node, Os){
+        this.os = Os
+        this.interface = undefined
         this.services = [] 
         this.fileSystem = new FileSystem(true) 
         this.ports = []  //Ports
         this.securityLevel = LOW_SECURITY
-        this.commander = new Commander(this)
+        this.commander = new Commander(this, this.os)
         this.currentPath = this.fileSystem.root
         this.navigationPath = [] // Folder 이동 경로 집어넣음
-        this.init()
+        this.users = []
+        this.logOnUser = undefined  
+        this.history = []
+        
+        this.load(node)
     }
 
-    init(){
+    getUser(name){
+        for(const user of this.users){
+            if(user.name == name) return user
+        }
+        return null
+    }
+
+    loginUser(uname, upassword){
+        for(const user of this.users){
+            if(user.name != uname){
+                continue
+            }
+            if(user.password == upassword){
+                return true
+            }else{
+                return false
+            }
+        }
+        return false
+    }
+
+    load(node){
+        this.interface = node.interface 
+
+        // load port 
+        node.ports.forEach( port => {
+            this.ports.push( new Port(
+                port.num, port.status
+            ))
+        })
+        // load user 
+        node.users.forEach( user => {
+            this.users.push( new User(
+                user.name, user.uid, user.password
+            ))
+        })
+
         // Service init 
         this.services.push(
             new MailService(this, "mail")
@@ -30,8 +69,25 @@ export class Computer{
         this.services.push(
             new MissionService(this, "mission")
         )
-        
-        // network interface init
+    }
+
+    /**
+     * 해당 파일을 읽고 터미널에 출력한다. 
+     * @param {File} file 열람할 파일  
+     */
+    readFile(file){
+        return file.data
+    }
+
+    /**
+     * 해당 파일에 데이터를 쓴다. 
+     * @param {file} file 열람할 파일
+     */
+    writeFile(file, data){
+
+    }
+
+    removeFile(){
 
     }
 
@@ -46,6 +102,9 @@ export class Computer{
     getFullPathAtDepth(){
         let path = '' 
         let folder = this.fileSystem.root
+        if(this.navigationPath.length == 0){
+            return '/'
+        }
         for(const element of this.navigationPath){
             path += `/${folder.folders[element].name}`
             folder = folder.folders[element]
@@ -134,9 +193,44 @@ export class Computer{
         let commandParse = command.trim().split(' ')
         let com = commandParse[0]
         let argv = commandParse.slice(1)
+
+        this.history.push(command)
+
         switch(com){
+            case "id":
+                return this.commander.id()
+                
+            case "scan":
+                return this.commander.scan()
+                
+            case "home":
+                return this.commander.home()
+
+            case "login":
+                if(commandParse.length == 3){
+                    return this.commander.login(argv[0], argv[1])
+                }else{
+                    return `Usage: login [USER NAME] [USER PASSWORD]`
+                }
+
+            // connect 시 guest로 자동 로그인
+            case "connect":
+                if(commandParse.length == 2){
+                    return this.commander.connect(argv[0])
+                }else{
+                    return `Usage: connect [NETWORK IP]`
+                }
+
+            case "history":
+                return this.commander.history()
+
             case "ls":
-                return this.commander.ls()
+                if(commandParse.length == 2){
+                    if(argv[0] == '-al') return this.commander.lsDetail(argv[0])
+                    else return `Usage: ls -al`         
+                }else{
+                    return this.commander.ls()
+                }
             
             case "pwd":
                 return this.commander.pwd()
@@ -148,14 +242,14 @@ export class Computer{
                 if(commandParse.length == 2){
                     return this.commander.cd(argv[0])
                 }else{
-                    return `cd:\u2003[Usage] cd FolderPath`
+                    return `Usage: cd [FOLDER PATH]`
                 }
 
             case "cat":
                 if(commandParse.length == 2){
                     return this.commander.cat(argv[0])
                 }else{
-                    return `cat:\u2003[Usage]cat FilePath`
+                    return `Usage: cat [FILENAME]`
                 }
 
             case "ifconfig":
@@ -176,15 +270,15 @@ export class Computer{
 }
 
 class Port{
-    constructor(){
-        this.isOpen 
-        this.number 
+    constructor(num, s){
+        this.status = s
+        this.number = num
     }
     openPort(){
-        this.isOpen = true
+        this.status = true
     }
 
     closePort(){
-        this.isOpen = false 
+        this.status = false 
     }
 }

@@ -87,6 +87,7 @@ a {
 .input span{
     color: var(--color-white);
     font-size: 14px;
+    white-space: pre;
 }
 
 .input input[type="text"]{

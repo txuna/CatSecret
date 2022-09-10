@@ -11,18 +11,40 @@ export class Game{
                 this.execute()
             }
         })
+
+        this.init()
+    }
+
+    init(){
+        let computer = this.os.isConncted ? this.os.connectedComputer : this.os.thisComputer
+        this.terminal.computer.innerText = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}] #`
     }
 
     execute(){
-        if(this.terminal.command.value === '') return 
+        if(this.terminal.command.value === ''){
+            return 
+        }
+        if(this.terminal.command.value.trim().split(' ') == 'clear'){
+            this.terminal.clear()
+            return 
+        }
+
+        // 컴퓨터의 IP 및 로그인된 사용자의 계정을 불러온다.
+        let computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        let comp_msg = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]`
         
         let output = this.os.execute(this.terminal.command.value)
+
         let msg = {
             'is_command' : true, 
             'command' : this.terminal.command.value, 
-            'output' : output
+            'output' : output,
+            'computer' : comp_msg
         }
         this.terminal.writeTerminal(msg)
+
+        computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        this.terminal.computer.innerText = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}] #`
     }
 
     update(){

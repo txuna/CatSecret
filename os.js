@@ -1,5 +1,7 @@
 import {Computer} from './computer.js'
 import {Program} from './program.js'
+import {myComputerNode} from './config.js'
+import {computerNodeList} from './config.js'
 
 /**
  * 사용자의 명령 수행 및 컴퓨터 관리, 실행프로세스 관리 
@@ -7,21 +9,27 @@ import {Program} from './program.js'
  */
 export class OS{
     constructor(){
+        this.networkNodes = []
         this.baseRam = 4
         this.additionalRam = 0
         this.totalRam = this.baseRam + this.additionalRam
-
         this.exeProcessList = [] 
-        this.thisComputer = new Computer()
+        this.thisComputer = false
         this.connectedComputer = undefined
-        this.isConncted = false
+        this.isConnected = undefined
         this.program = new Program()
 
         this.init()
     }
 
+    // 컴퓨터 객체 생성시 로그인 코드 ON 
     init(){
-        
+        this.thisComputer = new Computer(myComputerNode, this)
+        this.thisComputer.commander.login('tuuna', 'tuuna1234')
+
+        computerNodeList.forEach( node => {
+            this.networkNodes.push(new Computer(node, this)) 
+        })
     }
 
     /**
@@ -31,7 +39,8 @@ export class OS{
      */
     execute(command){
         let result 
-        if(this.isConncted){
+
+        if(this.isConnected){
             result = this.connectedComputer.execute(command)
         }else{
             result = this.thisComputer.execute(command)
@@ -47,7 +56,7 @@ export class OS{
         })
         */
         /*
-        if(this.isConncted){
+        if(this.isConnected){
             this.connectedComputer.update()
         }else{
             this.thisComputer.update()

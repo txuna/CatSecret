@@ -1,3 +1,6 @@
+import {Computer} from './computer.js'
+import { User } from './user.js'
+
 /**
  *  컴퓨터에 존재하는 명령어를 실행하는 클래스
  */
@@ -5,9 +8,11 @@ export class Commander{
     /**
      * 
      * @param {Computer} comp 컴퓨터의 자원에 접근하기위한 인자
+     * @param {OS} Os 최초의 운영체제에 접근하기위한 인자(시스템 자원 관리)
      */
-    constructor(comp){
+    constructor(comp, Os){
         this.computer = comp 
+        this.os = Os
     }
 
     help(){
@@ -17,25 +22,83 @@ export class Commander{
             cd\u2003\u2003change directory to given argument directory
         `
     }
+
+    history(){
+        let output = ''
+        this.computer.history.forEach( e => {
+            output += `${e}\n`
+        })
+        return output
+    }
+
+    id(){
+        let user = this.computer.getUser(this.computer.logOnUser)
+        if(user == null){
+            return `'${this.computer.logOnUser}' is Invalid User`
+        }else{
+            return `uid(${user.uid})\u2003uname(${user.name})`
+        }
+    }
+
+    login(uname, upassword){
+        if(this.computer.loginUser(uname, upassword)){
+            this.computer.logOnUser = uname
+            return `Successfully login ${uname}`
+        }else{
+            console.log('fail')
+            return `Invalid User ${uname}`
+        }
+    }
+
+    scan(){
+        let output = ''
+        if(this.os.isConnected){
+            return `Already connected other network. Do not scan network`
+        }
+        output += 'network\u2003\u2003\u2003status\n'
+        this.os.networkNodes.forEach( node => {
+            output += `${node.interface.ip}\u2003\u2003on`
+        })
+        return output
+    }
+
+    // 해당 ip가 존재하는 노드인지 확인 존재하는 노드라면 해당 노드와 연결
+    connect(ip){
+        let flag = false
+        if(this.os.isConnected){
+            return `Already connect other network. Please go to the home.`
+        }
+        for(const node of this.os.networkNodes){
+            if(node.interface.ip == ip){
+                this.os.isConnected = true 
+                this.os.connectedComputer = node
+                node.commander.login('guest', 'guest')
+                flag = true
+                break 
+            }
+        }
+        if(!flag){
+            return `${ip} doesn't exist network!`
+        }else{
+            return `Successfully Connect! ${ip}`
+        }
+    }
+
+    // remote connection close and go to home network 
+    home(){
+        if(!this.os.isConnected){
+            return `Alreay Home Network`
+        }else{
+            this.os.isConnected = false
+            this.os.connectedComputer = undefined
+            return `Welcome to home!`
+        }
+    }
     
     ls(){
-        let currentPath = this.computer.currentPath
-        let fileSystem = this.computer.fileSystem 
-        let folder = undefined 
+        let folder = this.computer.currentPath
         let output = ''
-        /*
-        if(fileSystem.root.name == currentPath.name){
-            folder = fileSystem.root 
-        }else{
-            folder = fileSystem.root.searchFolder(currentPath)
-        }
-        */
 
-        folder = this.computer.currentPath
-
-        /**
-         * argv : -al 인자가 들어가면 세부정보 출력
-         */
         folder.folders.forEach( f => {
             output += `${f.name}\u2003`
         })
@@ -44,6 +107,21 @@ export class Commander{
             output += `${f.name}\u2003`
         })
         return output
+    }
+
+    lsDetail(){
+        let folder = this.computer.currentPath 
+        let output = ''
+        
+        folder.folders.forEach( f => {
+            output += `${f.ownerbit} ${f.otherbit} ${f.owner} ${f.size} ${f.createAt} ${f.name}\n`
+        })
+
+        folder.files.forEach( f => {
+            output += `${f.ownerbit} ${f.otherbit} ${f.owner} ${f.size} ${f.createAt} ${f.name}\n`
+        })
+
+        return output 
     }
 
     pwd(){
@@ -59,7 +137,6 @@ export class Commander{
     }
 
     /**
-     * 
      * @param {string} path 변경할 디렉토리 PATH 
      * path가 존재하는 주소인지
      * path가 파일이 아닌 폴더인지 
@@ -84,8 +161,19 @@ export class Commander{
         return ''
     }
     
-    cat(path){
-
+    cat(filename){
+        let flag = false
+        let folder = this.computer.currentPath 
+        for(const file of folder.files){
+            if(filename == file.name){
+                console.log(file)
+                return this.computer.readFile(file)
+            }
+        }
+        if(!flag){
+            return `cat: not found file '${filename}'`
+        }
+        return output
     }
 
     ps(){
