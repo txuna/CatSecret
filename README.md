@@ -51,7 +51,7 @@
 │       │   syslog.log
 └───home
 │   └───user
-│   │   │   README.md
+│       │   README.md
 └───root
 └───etc
 │   │   passwd
