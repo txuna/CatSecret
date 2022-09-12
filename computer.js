@@ -23,6 +23,7 @@ export class Computer{
         this.history = []
         this.log = undefined
         this.connectedIP = undefined
+        this.status = undefined
         
         this.load(node)
     }
@@ -77,6 +78,32 @@ export class Computer{
         this.services.push(
             new MissionService(this, "mission")
         )
+
+        // computer power on 
+        this.turnOn()
+    }
+
+    turnOn(){
+        this.log.writeLog('Starting Computer turn on...:\u2003[ OK ]' ,'system')
+        this.status = true
+        this.boot()
+    }
+
+    turnOff(){
+        
+        this.log.writeLog('Starting Computer turn off...:\u2003[ OK ]' ,'system')
+        this.status = false
+    }
+
+    boot(){
+        this.log.writeLog('Starting udev:\u2003[ OK ]' ,'system')
+        this.log.writeLog('Setting hostname jmote:\u2003[ OK ]', 'system')
+        this.log.writeLog('Checking.... Filesystem:\u2003[ OK ]', 'system')
+        this.log.writeLog('Checking Services...', 'system')
+        this.log.writeLog('Service Mail...:\u2003[ OK ]', 'system')
+        this.log.writeLog('Service Mission...:\u2003[ OK ]', 'system')
+        this.log.writeLog('Checking System File...\u2003[ OK ]', 'system')
+        this.log.writeLog('Starting up Program...\u2003[ OK ]', 'system')
     }
 
     /**
@@ -318,6 +345,16 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+            case 'passwd':
+                if(commandParse.length == 3){
+                    return this.commander.passwd(argv[0], argv[1])
+                }else{
+                    return `Usage: passwd [PASSWORD] [CONFIRM PASSWORD]`
+                }
+                
+            case 'reboot':
+                return this.commander.reboot()
+
             case 'rmdir':
                 return this.commander.rmdir(argv[0])
 

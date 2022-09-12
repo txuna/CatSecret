@@ -8,6 +8,7 @@ export class Log{
         this.logFolder = logF
         this.authLog = undefined
         this.historyLog = undefined
+        this.sysLog = undefined
         this.makeLogFile()
     }
 
@@ -22,6 +23,12 @@ export class Log{
             this.logFolder.addFile(new File('history.log', '', 'root', 'rwx', 'r--'))
         }
         this.historyLog = this.logFolder.searchFile('history.log')
+        
+        // 각 종 시스템 정보를 기록하는 로그 파일 
+        if(!this.logFolder.hasFile('syslog.log')){
+            this.logFolder.addFile(new File('syslog.log', '', 'root', 'rwx', 'r--'))
+        }
+        this.sysLog = this.logFolder.searchFile('syslog.log')
     }
 
     // log는 권한 체크 X 
@@ -35,6 +42,9 @@ export class Log{
             case 'history':
                 this.historyLog.writeData(`[${new Date().toLocaleString()}] ${msg}`)
                 break
+
+            case 'system':
+                this.sysLog.writeData(`[${new Date().toLocaleString()}] ${msg}`)
         }
     }
 }

@@ -4,4 +4,8 @@ export class User{
         this.uid = cuid
         this.password = cpassword
     }
+
+    changePassword(newPassword){
+        this.password = newPassword
+    }
 }

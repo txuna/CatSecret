@@ -16,8 +16,45 @@ export class Commander{
         this.os = Os
     }
 
+    writeLogWithIP(msg, type){
+        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
+    }
+
+    // 현재 로그인된 계정의 비밀번호를 변경한다. 
+    passwd(pw, pw2){
+        this.writeLogWithIP(`run command 'passwd'`, 'history')
+        let user = this.computer.getUser(this.computer.logOnUser)
+        if(user == null){
+            return `Invalid User ${this.computer.logOnUser}`
+        }
+        if(pw != pw2){
+            this.writeLogWithIP(`run command 'passwd': Invalid Password [Fail]`, 'history')
+            return `Invalid Password`
+        }
+        user.changePassword(pw)
+        this.writeLogWithIP(`run command 'passwd': Successfuly Changed Password [OK]`, 'history')
+        return `Successfully Changed Password!`
+    }
+
+    // 컴퓨터를 재부팅한다. 
+    reboot(){
+        this.writeLogWithIP(`run command 'reboot'`, 'history')
+        this.computer.turnOff()
+        // 5초뒤 설정
+        // that을 지정해주어야 함 
+        let that = this
+        setTimeout(function(){
+            that.computer.turnOn()
+        }, 5000)
+
+        this.home()
+        return 'Starting... Reboot'
+        
+    }
+
+    // 도움말을 출력한다. 
     help(){
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'help'`, 'history')
+        this.writeLogWithIP(`run command 'help'`, 'history')
         return `ls\u2003\u2003show folders and files in current directory
             pwd\u2003show current path in this computer
             help\u2003show command information
@@ -25,17 +62,19 @@ export class Commander{
         `
     }
 
+    // 지금까지 쳤던 명령어를 보여준다. 
     history(){
         let output = ''
         this.computer.history.forEach( e => {
             output += `${e}\n`
         })
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'history'`, 'history')
+        this.writeLogWithIP(`run command 'history'`, 'history')
         return output
     }
 
+    // 현재 로그인된 계정을 보여준다. 
     id(){
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'id'`, 'history')
+        this.writeLogWithIP(`run command 'id'`, 'history')
         let user = this.computer.getUser(this.computer.logOnUser)
         if(user == null){
             return `'${this.computer.logOnUser}' is Invalid User`
@@ -44,17 +83,19 @@ export class Commander{
         }
     }
 
+    // 현재 로그인되어 있는 계정을 변경한다. 
     login(uname, upassword){
         if(this.computer.loginUser(uname, upassword)){
             this.computer.logOnUser = uname
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'login ${uname}:${upassword}' Success!`, 'history')
+            this.writeLogWithIP(`run command 'login ${uname}:${upassword}' Success!`, 'history')
             return `Successfully login ${uname}`
         }else{
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'login ${uname}:${upassword}' Failed!`, 'history')
+            this.writeLogWithIP(`run command 'login ${uname}:${upassword}' Failed!`, 'history')
             return `Invalid User ${uname}`
         }
     }
 
+    // 네트워크상에서 식별된 노드를 검색한다. 
     scan(){
         let output = ''
         if(this.os.isConnected){
@@ -62,7 +103,11 @@ export class Commander{
         }
         output += 'network\u2003\u2003\u2003status\n'
         this.os.networkNodes.forEach( node => {
-            output += `${node.interface.ip}\u2003\u2003on\n`
+            let status = 'OFF'
+            if(node.status == true){
+                status = 'ON'
+            }
+            output += `${node.interface.ip}\u2003\u2003${status}\n`
         })
         return output
     }
@@ -75,6 +120,10 @@ export class Commander{
         }
         for(const node of this.os.networkNodes){
             if(node.interface.ip == ip){
+                // 만일 해당 컴퓨터가 꺼져있다면 
+                if(node.status == false){
+                    return `connect: '${ip}': computer turned off!`
+                }
                 this.os.isConnected = true 
                 this.os.connectedComputer = node
                 node.commander.login('guest', 'guest')
@@ -86,7 +135,7 @@ export class Commander{
             return `connect: '${ip}': doesn't exist network!`
         }else{
             this.os.connectedComputer.connectedIP = this.computer.interface.ip
-            this.os.connectedComputer.log.writeLog(`${this.computer.interface.ip}-${this.computer.interface.mac} connected!` ,'auth')
+            this.writeLogWithIP(`${this.computer.interface.ip}-${this.computer.interface.mac} connected!`, 'auth')
             return `Successfully Connect! ${ip}`
         }
     }
@@ -107,7 +156,7 @@ export class Commander{
         let folder = this.computer.currentPath
         let output = ''
         if(!this.computer.verifyPermissionAtFolder(folder, 'r')){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'ls': Permission denied!`, 'history')
+            this.writeLogWithIP(`run command 'ls': Permission denied!`, 'history')
             return `ls: ${folder.name}: Permission denied`
         }
         folder.folders.forEach( f => {
@@ -117,16 +166,17 @@ export class Commander{
         folder.files.forEach( f => {
             output += `${f.name}\u2003`
         })
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'ls'`, 'history')
+        this.writeLogWithIP(`run command 'ls'`, 'history')
         return output
     }
 
+    // ls 커맨드의 세부정보까지 출력한다. 
     lsDetail(){
         let folder = this.computer.currentPath 
         let output = ''
         
         if(!this.computer.verifyPermissionAtFolder(folder, 'r')){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'ls -al': Permission denied!`, 'history')
+            this.writeLogWithIP(`run command 'ls -al': Permission denied!`, 'history')
             return `ls: ${folder.name}: Permission denied`
         }
 
@@ -137,18 +187,20 @@ export class Commander{
         folder.files.forEach( f => {
             output += `${f.ownerbit} ${f.otherbit} ${f.owner} ${f.size} ${f.createAt} ${f.name}\n`
         })
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'ls -al'`, 'history')
+        this.writeLogWithIP(`run command 'ls -al'`, 'history')
         return output 
     }
 
+    // 현재 있는 경로를 출력한다. 
     pwd(){
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'pwd'`, 'history')
+        this.writeLogWithIP(`run command 'pwd'`, 'history')
         return this.computer.getFullPathAtDepth()
     }
 
+    // 네트워크 인터페이스를 출력한다. 
     ifconfig(){ 
         //\u2424
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'ifconfig'`, 'history')
+        this.writeLogWithIP(`run command 'ifconfig'`, 'history')
         return `eth0:\u2003 flags=4163<UP, BROADCAST, RUNNING, MULTICAST> mtu 1500
         inet ${this.computer.interface.ip} netmask 255.255.255.0
         ether ${this.computer.interface.mac} txqueuelen 1000 (Ethernet)`
@@ -165,15 +217,15 @@ export class Commander{
      * 권한 체크 필요
      */
     cd(path){
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'cd ${path}'`, 'history')
+        this.writeLogWithIP(`run command 'cd ${path}'`, 'history')
         let tmpNavigation = this.computer.getFolderNavigationFromPath(path)
         if(tmpNavigation == null){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'cd ${path}': Cannot found directory`, 'history')
+            this.writeLogWithIP(`run command 'cd ${path}': Cannot found directory`, 'history')
             return `cd: '${path}': Cannot found directory`
         }
 
         if(!this.computer.verifyPermissionFromNavigation(tmpNavigation, 'x')){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'cd ${path}': Permission denied`, 'history')
+            this.writeLogWithIP(`run command 'cd ${path}': Permission denied`, 'history')
             return `cd: '${path}': Permission denied`
         }
 
@@ -182,18 +234,19 @@ export class Commander{
         return ''
     }
     
+    // 현재 경로에 있는 파일의 내용을 확인한다. 
     cat(filename){
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'cat ${filename}'`, 'history')
+        this.writeLogWithIP(`run command 'cat ${filename}'`, 'history')
         let folder = this.computer.currentPath 
 
         if(!folder.hasFile(filename)){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'cat ${filename}': Cannot found file`, 'history')
+            this.writeLogWithIP(`run command 'cat ${filename}': Cannot found file`, 'history')
             return `cat: '${filename}': Cannot found file`
         }
         const file = folder.searchFile(filename)
         let output = this.computer.readFile(file)
         if(output == null){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'cat ${filename}': Permission denied`, 'history')
+            this.writeLogWithIP(`run command 'cat ${filename}': Permission denied`, 'history')
             return `cat: '${filename}': Permission denied`
         }else{
             return output
@@ -206,17 +259,17 @@ export class Commander{
 
     // File 삭제 
     rm(fname){
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'rm ${fname}'`, 'history')
+        this.writeLogWithIP(`run command 'rm ${fname}'`, 'history')
         let folder = this.computer.currentPath 
 
         if(!folder.hasFile(fname)){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'rm ${fname}': Cannot found file`, 'history')
+            this.writeLogWithIP(`run command 'rm ${fname}': Cannot found file`, 'history')
             return `rm: '${fname}': Cannot found file`
         }   
         const file = folder.searchFile(fname)
 
         if(!this.computer.removeFile(file)){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'rm ${fname}': Permission denied`, 'history')
+            this.writeLogWithIP(`run command 'rm ${fname}': Permission denied`, 'history')
             return `rm: '${fname}': Permission denied`
         }
         return 'Successfully remove file'
@@ -224,15 +277,15 @@ export class Commander{
 
     // 폴더 삭제
     rmdir(fname){
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'rmdir ${fname}'`, 'history')
+        this.writeLogWithIP(`run command 'rmdir ${fname}'`, 'history')
         let currentfolder = this.computer.currentPath
         if(!currentfolder.hasFolder(fname)){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'rmdir ${fname}': Cannot found file`, 'history')
+            this.writeLogWithIP(`run command 'rmdir ${fname}': Cannot found file`, 'history')
             return `rm: '${fname}': Cannot found folder`
         }   
         const folder = currentfolder.searchFolder(fname)
         if(!this.computer.removeFolder(folder)){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'rmdir ${fname}': Permission denied`, 'history')
+            this.writeLogWithIP(`run command 'rmdir ${fname}': Permission denied`, 'history')
             return `rmdir: '${fname}': Permission denied`
         }
         return 'Successfully remove folder'
@@ -240,15 +293,16 @@ export class Commander{
 
     // 현재폴더에 빈 폴더 생성 
     mkdir(fname){
+        this.writeLogWithIP(`run command 'mkdir ${fname}'`, 'history')
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'mkdir ${fname}'`, 'history')
         let currentFolder = this.computer.currentPath
         if(!this.computer.verifyPermissionAtFolder(currentFolder, 'w')){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'mkdir ${fname}': Permission denied`, 'history')
+            this.writeLogWithIP(`run command 'mkdir ${fname}': Permission denied`, 'history')
             return `mkdir: '${fname}': Permission denied`
         }
 
         if(currentFolder.hasFolder(fname)){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'mkdir ${fname}': Already Exist`, 'history')
+            this.writeLogWithIP(`run command 'mkdir ${fname}': Already Exist`, 'history')
             return `mkdir: '${fname}': Already Exist`
         }
 
@@ -260,14 +314,14 @@ export class Commander{
 
     // 현재 폴더에 빈 파일 생성 
     touch(filename){
-        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'touch ${filename}'`, 'history')
+        this.writeLogWithIP(`run command 'touch ${filename}'`, 'history')
         const folder = this.computer.currentPath 
         if(!this.computer.verifyPermissionAtFolder(folder, 'w')){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'touch ${filename}': Permission denied`, 'history')
+            this.writeLogWithIP(`run command 'touch ${filename}': Permission denied`, 'history')
             return `touch: '${filename}': Permission denied`
         }
         if(folder.hasFile(filename)){
-            this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'touch ${filename}': Already Exist`, 'history')
+            this.writeLogWithIP(`run command 'touch ${filename}': Already Exist`, 'history')
             return `touch: '${filename}': Already Exist`
         }
         const user = this.computer.logOnUser
