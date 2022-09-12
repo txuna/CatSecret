@@ -20,6 +20,20 @@ export class Commander{
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
     }
 
+    // 현재 컴퓨터를 분석한다. 
+    analysis(){
+        let output = ''
+        output += `Computer Scanning...\n`
+        output += `RAM:\u2003${this.os.totalRam}GB\n`
+        output += `CPU:\u2003Intel(R) Core(TM) i7-7700K @ 4.20GHz\n`
+        output += `Port Scanning...\n`
+        this.computer.ports.forEach( port => {
+            let status = port.status? 'OPEN' : 'CLOSE'
+            output += `PORT ${port.number}:\u2003[ ${status} ]\n`
+        })
+        return output
+    }
+
     // 현재 로그인된 계정의 비밀번호를 변경한다. 
     passwd(pw, pw2){
         this.writeLogWithIP(`run command 'passwd'`, 'history')
@@ -86,7 +100,7 @@ export class Commander{
     // 현재 로그인되어 있는 계정을 변경한다. 
     login(uname, upassword){
         if(this.computer.loginUser(uname, upassword)){
-            this.computer.logOnUser = uname
+            //this.computer.logOnUser = uname
             this.writeLogWithIP(`run command 'login ${uname}:${upassword}' Success!`, 'history')
             return `Successfully login ${uname}`
         }else{
@@ -113,6 +127,7 @@ export class Commander{
     }
 
     // 해당 ip가 존재하는 노드인지 확인 존재하는 노드라면 해당 노드와 연결
+    // guest의 비밀번호가 변경되었을시 설정가능하게 해야할듯 옵션을 넣듯이 -P 1234 이렇게 
     connect(ip){
         let flag = false
         if(this.os.isConnected){
@@ -124,9 +139,13 @@ export class Commander{
                 if(node.status == false){
                     return `connect: '${ip}': computer turned off!`
                 }
+                //node.commander.login('guest', 'guest')
+                // guest의 비번 변경시 확인 체크 필요
+                if(!node.loginUser('guest', 'guest')){
+                    return `connect: '${ip}': Invalid 'guest' password!`
+                }
                 this.os.isConnected = true 
-                this.os.connectedComputer = node
-                node.commander.login('guest', 'guest')
+                this.os.connectedComputer = node   
                 flag = true
                 break 
             }
@@ -135,7 +154,7 @@ export class Commander{
             return `connect: '${ip}': doesn't exist network!`
         }else{
             this.os.connectedComputer.connectedIP = this.computer.interface.ip
-            this.writeLogWithIP(`${this.computer.interface.ip}-${this.computer.interface.mac} connected!`, 'auth')
+            this.os.connectedComputer.log.writeLog(`${this.computer.interface.ip}-${this.computer.interface.mac} connected!`, 'auth')
             return `Successfully Connect! ${ip}`
         }
     }

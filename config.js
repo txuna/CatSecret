@@ -21,6 +21,9 @@ export const myComputerNode = {
         },{
             num : 3306,
             status : true
+        },{
+            num : 80,
+            status : true
         }
     ],
     users : [
@@ -53,6 +56,9 @@ export const computerNodeList = [
             },{
                 num : 3306,
                 status : true
+            },{
+                num : 80,
+                status : false
             }
         ],
         users : [
@@ -82,6 +88,9 @@ export const computerNodeList = [
                 status : true
             },{
                 num : 3306,
+                status : true
+            },{
+                num : 80,
                 status : true
             }
         ],

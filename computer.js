@@ -41,6 +41,7 @@ export class Computer{
                 continue
             }
             if(user.password == upassword){
+                this.logOnUser = uname
                 return true
             }else{
                 return false
@@ -345,6 +346,9 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+            case 'analysis':
+                return this.commander.analysis()
+
             case 'passwd':
                 if(commandParse.length == 3){
                     return this.commander.passwd(argv[0], argv[1])
