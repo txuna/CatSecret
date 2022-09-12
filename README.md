@@ -46,12 +46,12 @@
 /
 └───var
 │   └───log
-│       │   auth.log
-│       │   history.log
-│       │   syslog.log
+│   │   │   auth.log
+│   │   │   history.log
+│   │   │   syslog.log
 └───home
 │   └───user
-│       │   README.md
+│   │   │   README.md
 └───root
 └───etc
 │   │   passwd
