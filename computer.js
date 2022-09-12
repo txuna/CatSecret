@@ -28,6 +28,11 @@ export class Computer{
         this.load(node)
     }
 
+    /**
+     * 유저이름을 기반으로 유저객체를 구하는 함수 
+     * @param {String} name 유저이름  
+     * @returns User객체 or NULL
+     */
     getUser(name){
         for(const user of this.users){
             if(user.name == name) return user
@@ -35,6 +40,12 @@ export class Computer{
         return null
     }
 
+    /**
+     * 현재 로그인된 사용자를 변경한다. 
+     * @param {String} uname        변경하려는 유저이름 
+     * @param {String} upassword    변경하려는 유저의 패스워드 
+     * @returns 로그인 성공 유무를 반환
+     */
     loginUser(uname, upassword){
         for(const user of this.users){
             if(user.name != uname){
@@ -50,6 +61,10 @@ export class Computer{
         return false
     }
 
+    /**
+     * 기본적인 컴퓨터 정보를 기반으로 각종 초기 설정을 진행한다. 
+     * @param {JSON} node 초기정보가 담긴 json 파일 
+     */
     load(node){
         // log init 
         let folder = this.fileSystem.root.searchFolder('var')
@@ -84,18 +99,26 @@ export class Computer{
         this.turnOn()
     }
 
+    /**
+     * 컴퓨터의 상태를 킨다. 
+     */
     turnOn(){
         this.log.writeLog('Starting Computer turn on...:\u2003[ OK ]' ,'system')
         this.status = true
         this.boot()
     }
 
+    /**
+     * 컴퓨터의 상태를 종료한다. 
+     */
     turnOff(){
-        
         this.log.writeLog('Starting Computer turn off...:\u2003[ OK ]' ,'system')
         this.status = false
     }
 
+    /**
+     * 부팅로그를 작성한다. 
+     */
     boot(){
         this.log.writeLog('Starting udev:\u2003[ OK ]' ,'system')
         this.log.writeLog('Setting hostname jmote:\u2003[ OK ]', 'system')
@@ -248,6 +271,10 @@ export class Computer{
         return true
     }
 
+    /**
+     * navigationPath를 기반으로 Full 경로를 구한다. 
+     * @returns 전체경로를 반환
+     */
     getFullPathAtDepth(){
         let path = '' 
         let folder = this.fileSystem.root
