@@ -1,6 +1,7 @@
 
 export class Terminal{
     constructor(){
+        this.vim = document.querySelector('.vim')
         this.term = document.querySelector(".terminal") 
         this.output_list = document.querySelector(".terminal ul")
         this.command = document.querySelector(".input input")
@@ -38,4 +39,5 @@ export class Terminal{
         this.command.value = ''
         this.term.scrollTop = this.term.scrollHeight;
     }
+
 }

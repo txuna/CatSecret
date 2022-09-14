@@ -47,7 +47,6 @@ export class OS{
             result = this.thisComputer.execute(command)
         }
         return result
-        //return `test.c\u2003.bash_history\u2003README.md`
     }
 
     update(){

@@ -76,6 +76,47 @@ a {
     font-weight:bold;
 }
 
+.vim{
+    width: 700px; 
+    height: 700px; 
+    background: black;
+    overflow-y:scroll;
+    display:flex; 
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.vim textarea{
+    width: 100%; 
+    height: 90%;
+    font-size:24px;
+    resize: none;
+    background:black;
+    color:white;
+}
+
+.vim div{
+    width:100%; 
+    height: 5%; 
+    background: transparent;
+}
+
+.mode span{
+    font-size:24px;
+    line-height: 36px;
+    color:white;
+}
+
+.command input{
+    background:transparent;
+    width:100%;
+    color:white;
+}
+
+.vim.hide{
+    display:none;
+}
+
 .terminal{
     width: 700px; 
     height: 700px; 
@@ -85,6 +126,10 @@ a {
     display:flex; 
     flex-direction: column;
     overflow-y:scroll;
+}
+
+.terminal.hide{
+    display:none;
 }
 
 .cursor{

@@ -38,7 +38,7 @@ export class Game{
         let computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
         // comp_msg : [tuuna@localhost 경로]#
         let comp_msg = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]`
-        
+
         let output = this.os.execute(this.terminal.command.value)
 
         let msg = {

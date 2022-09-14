@@ -422,6 +422,9 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+            case 'vim':
+                return this.commander.vim()
+                
             case 'chmod':
                 if(commandParse.length == 5){
                     return this.commander.chmod(argv[0], argv[1], argv[2], argv[3])
@@ -462,8 +465,8 @@ export class Computer{
             case "id":
                 return this.commander.id()
                 
-            case "scan":
-                return this.commander.scan()
+            case "nmap":
+                return this.commander.nmap()
                 
             case "home":
                 return this.commander.home()
