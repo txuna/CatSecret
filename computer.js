@@ -29,6 +29,23 @@ export class Computer{
     }
 
     /**
+     * 유효한 권한비트인지 확인한다. 
+     * @param {String} mode 권한비트
+     * @returns 유효유무
+     */
+    verifyMode(mode){
+        if(mode.length != 3){
+            return false
+        }
+        if(!(mode[0] == 'r' || mode[0] == '-')
+            || !(mode[1] == 'w' || mode[1] == '-')
+            || !(mode[2] == 'x' || mode[2] == '-')){
+                return false
+            }
+        return true
+    }
+
+    /**
      * 유저이름을 기반으로 유저객체를 구하는 함수 
      * @param {String} name 유저이름  
      * @returns User객체 or NULL
@@ -38,6 +55,19 @@ export class Computer{
             if(user.name == name) return user
         }
         return null
+    }
+
+    /**
+     * 유저네임이 존재하는 유저인지 확인
+     * @param {String} name 구하려는 유저 네임  
+     */
+    hasUser(name){
+        for(const user of this.users){
+            if(user.name == name){
+                return true
+            }
+        }
+        return false
     }
 
     /**
@@ -115,7 +145,6 @@ export class Computer{
         this.log.writeLog('Starting Computer turn off...:\u2003[ OK ]' ,'system')
         this.status = false
     }
-
     /**
      * 부팅로그를 작성한다. 
      */
@@ -129,12 +158,17 @@ export class Computer{
         this.log.writeLog('Checking System File...\u2003[ OK ]', 'system')
         this.log.writeLog('Starting up Program...\u2003[ OK ]', 'system')
     }
-
     /**
      * 해당 파일을 읽고 터미널에 출력한다. 
+     * 폴더의 r와 x 비트 확인 
      * @param {File} file 열람할 파일  
      */
     readFile(file){
+        const folder = this.currentPath
+        if(!this.verifyPermissionAtFolder(folder, 'r')
+            || !this.verifyPermissionAtFolder(folder, 'x')){
+            return false
+        }
         if(!this.verifyPermissionAtFile(file, 'r')){
             return null
         }
@@ -151,12 +185,13 @@ export class Computer{
 
     /**
      * 해당 파일을 현재 폴더에서 삭제한다. 
-     * 해당 파일의 w 권한 확인
+     * 해당 파일의 w 권한 확인 및  x 비트 확인 
      * @param {File} file 삭제하려는 파일 
      */
     removeFile(file){
         const folder = this.currentPath
-        if(!this.verifyPermissionAtFolder(folder, 'w')){
+        if(!this.verifyPermissionAtFolder(folder, 'w')
+            || !this.verifyPermissionAtFolder(folder, 'x')){
             return false
         }
         if(!this.verifyPermissionAtFile(file, 'w')){
@@ -234,12 +269,19 @@ export class Computer{
             return false
         }
         if(folder.owner == user.name){
+            if(type == '-'){
+                return true
+            }
             if(!folder.ownerbit.includes(type)){
                 return false
             }
         }else{
             // root라면
             if(user.uid == 1000) return true 
+            // root가 아닌 소유자는 자신의 소유자로만 변경 가능
+            if(type == '-'){
+                return false 
+            }
             if(!folder.otherbit.includes(type)){
                 return false
             }
@@ -250,7 +292,7 @@ export class Computer{
     /**
      * 작업하려는 파일에 대해 권한을 체크한다. 
      * @param {File} file 작업하려는 File 
-     * @param {String} type read or write bit 
+     * @param {String} type read or write bit, -넣을 시 소유자만 확인 비트체크 X 
      */
     verifyPermissionAtFile(file, type){
         let user = this.getUser(this.logOnUser)
@@ -258,12 +300,19 @@ export class Computer{
             return false
         }
         if(file.owner == user.name){
+            if(type == '-'){
+                return true
+            }
             if(!file.ownerbit.includes(type)){
                 return false
             }
         }else{
             // root라면
             if(user.uid == 1000) return true 
+            // root가 아닌 소유자는 자신의 소유자로만 변경 가능
+            if(type == '-'){
+                return false 
+            }
             if(!file.otherbit.includes(type)){
                 return false
             }
@@ -373,6 +422,12 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+            case 'chown':
+                if(commandParse.length == 4){
+                    return this.commander.chown(argv[0], argv[1], argv[2])
+                }else{
+                    return `Usage: chown [OPTION] [MODE] [FNAME]`
+                }
             case 'analysis':
                 return this.commander.analysis()
 

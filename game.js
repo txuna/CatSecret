@@ -20,6 +20,11 @@ export class Game{
         this.terminal.computer.innerText = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]# `
     }
 
+    // 쓰여진 값을 가지고 와서 자동완성
+    autoComplete(){
+
+    }
+
     execute(){
         if(this.terminal.command.value === ''){
             return 

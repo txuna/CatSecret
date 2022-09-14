@@ -28,6 +28,7 @@ export class FileSystem{
         this.root.addFolder(new Folder("root", 'root', 'rwx', 'r-x'))
         this.root.addFolder(new Folder("etc", 'root', 'rwx', 'r-x'))
         this.root.addFolder(new Folder("bin", 'root', 'rwx', 'r-x'))
+        this.root.addFolder(new Folder("tmp", 'root', 'rwx', 'rwx'))
 
         if(this.root.hasFolder("root")){
             let folder = this.root.searchFolder("root")
@@ -53,6 +54,9 @@ class FileStat{
         this.createAt = new Date().toLocaleString()
         this.modifyAt = this.createAt
         this.size = fsize
+    }
+    changeOwner(newOwner){
+        this.owner = newOwner
     }
 }
 

@@ -16,8 +16,63 @@ export class Commander{
         this.os = Os
     }
 
+
     writeLogWithIP(msg, type){
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
+    }
+
+    vim(fname){
+
+    }
+
+    // 주어진 파일의 mod를 변경한다. 
+    chmod(option, mode, fname){
+        if(option == '-File'){
+
+        }
+        else if(option == '-Folder'){
+
+        }
+    }
+
+    // 주어진 파일의 소유자를 변경한다. root는 모든 소유자 변경가능 일반 계정은 일반계정끼리만 가능
+    chown(option, owner, fname){
+        const currentFolder = this.computer.currentPath
+        let f = undefined
+        if(option == '-File'){
+            if(!currentFolder.hasFile(fname)){
+                return `Cannot found ${fname}`
+            }
+            f = currentFolder.searchFile(fname)
+            // 유저 권한 체크 
+            if(!this.computer.verifyPermissionAtFile(f, '-')){
+                return `chown: Permission denied!`
+            }
+        }
+        else if(option == '-Folder'){
+            if(!currentFolder.hasFolder(fname)){
+                return `Cannout found ${fname}`
+            }
+            f = currentFolder.searchFolder(fname)
+            // 유저 권한 체크 
+            if(!this.computer.verifyPermissionAtFolder(f, '-')){
+                return `chown: Permission denied!`
+            }
+        }else{
+            return `chown: Invalid Option!`
+        }
+        // 유저 확인 
+        if(!this.computer.hasUser(owner)){
+            return `Invalid User '${owner}'`
+        }
+        // 해당 디렉토리의 권한 확인 - 실행비트의 존재 유무 
+        if(!this.computer.verifyPermissionAtFolder(currentFolder, 'x')){
+            return `chown: Permission denied!`
+        }
+        // owner 변경 
+        f.changeOwner(owner)
+
+        return `Successfully modified owner at '${fname}'!`
     }
 
     // 현재 컴퓨터를 분석한다. 
@@ -174,7 +229,8 @@ export class Commander{
     ls(){
         let folder = this.computer.currentPath
         let output = ''
-        if(!this.computer.verifyPermissionAtFolder(folder, 'r')){
+        if(!this.computer.verifyPermissionAtFolder(folder, 'r')
+            || !this.computer.verifyPermissionAtFolder(folder, 'x')){
             this.writeLogWithIP(`run command 'ls': Permission denied!`, 'history')
             return `ls: ${folder.name}: Permission denied`
         }
@@ -194,7 +250,8 @@ export class Commander{
         let folder = this.computer.currentPath 
         let output = ''
         
-        if(!this.computer.verifyPermissionAtFolder(folder, 'r')){
+        if(!this.computer.verifyPermissionAtFolder(folder, 'r')
+            || !this.computer.verifyPermissionAtFolder(folder, 'x')){
             this.writeLogWithIP(`run command 'ls -al': Permission denied!`, 'history')
             return `ls: ${folder.name}: Permission denied`
         }
@@ -294,7 +351,7 @@ export class Commander{
         return 'Successfully remove file'
     }
 
-    // 폴더 삭제
+    // 폴더 삭제 
     rmdir(fname){
         this.writeLogWithIP(`run command 'rmdir ${fname}'`, 'history')
         let currentfolder = this.computer.currentPath
@@ -315,7 +372,9 @@ export class Commander{
         this.writeLogWithIP(`run command 'mkdir ${fname}'`, 'history')
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] run command 'mkdir ${fname}'`, 'history')
         let currentFolder = this.computer.currentPath
-        if(!this.computer.verifyPermissionAtFolder(currentFolder, 'w')){
+        // 해당 폴더에 쓰기비트와 실행비트 켜져있어야 함 
+        if(!this.computer.verifyPermissionAtFolder(currentFolder, 'w')
+            || !this.computer.verifyPermissionAtFolder(currentFolder, 'x')){
             this.writeLogWithIP(`run command 'mkdir ${fname}': Permission denied`, 'history')
             return `mkdir: '${fname}': Permission denied`
         }
@@ -326,7 +385,7 @@ export class Commander{
         }
 
         const user = this.computer.logOnUser
-        const folder = new Folder(fname, user, 'rw', 'r-')
+        const folder = new Folder(fname, user, 'rw-', 'r--')
         currentFolder.addFolder(folder)
         return `Successfully made new folder!`
     }
@@ -335,7 +394,9 @@ export class Commander{
     touch(filename){
         this.writeLogWithIP(`run command 'touch ${filename}'`, 'history')
         const folder = this.computer.currentPath 
-        if(!this.computer.verifyPermissionAtFolder(folder, 'w')){
+        // 해당 폴더에 실행비트와 쓰기비트 켜져있어야 함 
+        if(!this.computer.verifyPermissionAtFolder(folder, 'w')
+            || !this.computer.verifyPermissionAtFolder(folder, 'x')){
             this.writeLogWithIP(`run command 'touch ${filename}': Permission denied`, 'history')
             return `touch: '${filename}': Permission denied`
         }
@@ -344,9 +405,9 @@ export class Commander{
             return `touch: '${filename}': Already Exist`
         }
         const user = this.computer.logOnUser
-        const file = new File(filename, '', user, 'rw', 'r-')
+        const file = new File(filename, '', user, 'rw-', 'r--')
         folder.addFile(file)
-        return `Successfully made new file!`
+        return `Successfully touch new file!`
     }
 
     mv(){
