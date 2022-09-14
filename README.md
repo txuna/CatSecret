@@ -28,7 +28,7 @@
 - [X] rmdir     현재 경로에 있는 폴더를 삭제한다. [FOLDER]
 - [X] mkdir     현재 경로에 폴더를 생성한다. [FOLDER]
 - [X] touch     현재 경로에 빈 파일을 생성한다. [FILE]
-- [ ] chown     파일 및 폴더의 소유자 변경 [USER] [-FOLDER OR -FILE] [FILE OR FOLDER]
+- [X] chown     파일 및 폴더의 소유자 변경 [USER] [-FOLDER OR -FILE] [FILE OR FOLDER]
 - [X] passwd    해당 유저의 비밀번호 변경 [PASSWORD] [CONFIRM PASSWORD]
 - [X] mkdir     현재 경로에 폴더를 생성한다. [FOLDER]
 - [X] touch     현재 경로에 파일을 생성한다. [FILE]
