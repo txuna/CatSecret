@@ -26,13 +26,46 @@ export class Commander{
     }
 
     // 주어진 파일의 mod를 변경한다. 
-    chmod(option, mode, fname){
+    chmod(option, ownerMode, otherMode, fname){
+        const currentFolder = this.computer.currentPath
+        let f = undefined
         if(option == '-File'){
-
+            if(!currentFolder.hasFile(fname)){
+                return `chmod: Cannot found ${fname}`
+            }
+            f = currentFolder.searchFile(fname)
+            // 유저 권한 체크 
+            if(!this.computer.verifyPermissionAtFile(f, '-')){
+                return `chmod: Permission denied!`
+            }
         }
         else if(option == '-Folder'){
-
+            if(!currentFolder.hasFolder(fname)){
+                return `chmod: Cannout found ${fname}`
+            }
+            f = currentFolder.searchFolder(fname)
+            // 유저 권한 체크 
+            if(!this.computer.verifyPermissionAtFolder(f, '-')){
+                return `chmod: Permission denied!`
+            }
+        }else{
+            return `chmod: Invalid Option!`
         }
+        // 정상적인 mod인지 확인
+        if(!this.computer.verifyMode(ownerMode)
+            || !this.computer.verifyMode(otherMode)){
+                return `chmod: Invalid mode`
+        }
+
+        // 해당 디렉토리의 권한 확인 - 실행비트의 존재 유무 
+        if(!this.computer.verifyPermissionAtFolder(currentFolder, 'x')){
+            return `chown: Permission denied!`
+        }
+
+        f.changeOwnerMode(ownerMode)
+        f.changeOtherMode(otherMode)
+        return `Successfully modified owner at '${fname}'!`
+
     }
 
     // 주어진 파일의 소유자를 변경한다. root는 모든 소유자 변경가능 일반 계정은 일반계정끼리만 가능
@@ -41,7 +74,7 @@ export class Commander{
         let f = undefined
         if(option == '-File'){
             if(!currentFolder.hasFile(fname)){
-                return `Cannot found ${fname}`
+                return `chown: Cannot found ${fname}`
             }
             f = currentFolder.searchFile(fname)
             // 유저 권한 체크 
@@ -51,7 +84,7 @@ export class Commander{
         }
         else if(option == '-Folder'){
             if(!currentFolder.hasFolder(fname)){
-                return `Cannout found ${fname}`
+                return `chown: Cannout found ${fname}`
             }
             f = currentFolder.searchFolder(fname)
             // 유저 권한 체크 
@@ -63,7 +96,7 @@ export class Commander{
         }
         // 유저 확인 
         if(!this.computer.hasUser(owner)){
-            return `Invalid User '${owner}'`
+            return `chown: Invalid User '${owner}'`
         }
         // 해당 디렉토리의 권한 확인 - 실행비트의 존재 유무 
         if(!this.computer.verifyPermissionAtFolder(currentFolder, 'x')){
@@ -385,7 +418,7 @@ export class Commander{
         }
 
         const user = this.computer.logOnUser
-        const folder = new Folder(fname, user, 'rw-', 'r--')
+        const folder = new Folder(fname, user, 'rwx', 'r-x')
         currentFolder.addFolder(folder)
         return `Successfully made new folder!`
     }

@@ -38,11 +38,18 @@
     /* Animation */
     --animation-duration: 300ms;
 }
-/*box-sizing은 박스의 크기를 어떤 것을 기준으로 계산할지를 정하는 속성입니다.*/
 
+@font-face {
+    font-family: "LcdFont";
+    src: url("LcdSolid-VPzB.ttf") format("truetype");
+    font-weight: normal;
+}
+
+/*box-sizing은 박스의 크기를 어떤 것을 기준으로 계산할지를 정하는 속성입니다.*/
 * {
     box-sizing: border-box;
     scroll-behavior: smooth;
+    font-family: 'LcdFont';
 }
 
 body {
@@ -70,8 +77,8 @@ a {
 }
 
 .terminal{
-    width: 500px; 
-    height: 500px; 
+    width: 700px; 
+    height: 700px; 
     background: black;
     margin:24px;
     padding: 12px;

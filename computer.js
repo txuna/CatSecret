@@ -422,11 +422,17 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+            case 'chmod':
+                if(commandParse.length == 5){
+                    return this.commander.chmod(argv[0], argv[1], argv[2], argv[3])
+                }else{
+                    return `Usage: chmod [OPTION] [OWNER MOD] [OTHER MOD] [FNAME]`
+                }
             case 'chown':
                 if(commandParse.length == 4){
                     return this.commander.chown(argv[0], argv[1], argv[2])
                 }else{
-                    return `Usage: chown [OPTION] [MODE] [FNAME]`
+                    return `Usage: chown [OPTION] [OWNER] [FNAME]`
                 }
             case 'analysis':
                 return this.commander.analysis()

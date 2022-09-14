@@ -58,6 +58,12 @@ class FileStat{
     changeOwner(newOwner){
         this.owner = newOwner
     }
+    changeOwnerMode(newMode){
+        this.ownerbit = newMode
+    }
+    changeOtherMode(newMode){
+        this.otherbit = newMode
+    }
 }
 
 /**
