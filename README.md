@@ -28,7 +28,7 @@
 - [X] rmdir     현재 경로에 있는 폴더를 삭제한다. [FOLDER]
 - [X] mkdir     현재 경로에 폴더를 생성한다. [FOLDER]
 - [X] touch     현재 경로에 빈 파일을 생성한다. [FILE]
-- [X] chown     파일 및 폴더의 소유자 변경 [USER] [-FOLDER OR -FILE] [FILE OR FOLDER]
+- [X] chown     파일 및 폴더의 소유자 변경 [-File or -Folder] [USER] [FILE OR FOLDER]
 - [X] passwd    해당 유저의 비밀번호 변경 [PASSWORD] [CONFIRM PASSWORD]
 - [X] mkdir     현재 경로에 폴더를 생성한다. [FOLDER]
 - [X] touch     현재 경로에 파일을 생성한다. [FILE]
@@ -38,7 +38,7 @@
 - [ ] chmod     파일 및 폴더의 권한을 변경 [mod] [-FOLDER OR -FILE] [FILE OR FOLDER]
 - [X] reboot    컴퓨터를 재부팅한다. 5초뒤 켜짐
 - [ ] mv        현재 경로에 있는 파일 및 폴더의 이름을 변경한다. [FILE OR FOLDER]
-- [ ] cp        
+- [ ] cp        현재 경로에 있는 파일 및 폴더를 복사하여 해당 위치에 복한다. 
 - [X] analysis  현재 컴퓨터를 분석한다. (포트개방여부, 램, cpu, 등등)
 - [ ] VIM       가상의 편집기를 오픈한다. 
 
@@ -61,6 +61,7 @@
 └───bin
 └───mail
 └───mission
+└───tmp
 ```
 
 
