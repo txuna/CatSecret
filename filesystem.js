@@ -161,6 +161,11 @@ export class File extends FileStat{
     }
 
     writeData(fdata){
+        this.data = `${fdata}\n`
+        this.size = this.data.length * ALIGN_SIZE
+    }
+
+    appendData(fdata){
         this.data += `${fdata}\n`
         this.size = this.data.length * ALIGN_SIZE
     }

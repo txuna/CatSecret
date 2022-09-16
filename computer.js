@@ -180,7 +180,10 @@ export class Computer{
      * @param {file} file 열람할 파일
      */
     writeFile(file, data){
-
+        if(!this.verifyPermissionAtFile(file, 'w')){
+            return `vim: Permission denied`
+        }
+        file.writeData(data)
     }
 
     /**
@@ -423,7 +426,11 @@ export class Computer{
 
         switch(com){
             case 'vim':
-                return this.commander.vim()
+                if(commandParse.length == 2){
+                    return this.commander.vim(argv[0])
+                }else{
+                    return `Usage: vim [FILENAME]`
+                }
                 
             case 'chmod':
                 if(commandParse.length == 5){

@@ -14,35 +14,52 @@ export class Commander{
     constructor(comp, Os){
         this.computer = comp 
         this.os = Os
-        this.vimObject = new Vim()
+        this.vimObject = new Vim(this)
     }
 
     writeLogWithIP(msg, type){
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
     }
 
-    /*
-    vim(){
-        this.vimObject.openVim()
-        this.vimObject.vimCommand.addEventListener('keypress', ({keyCode}) => {
-            if(keyCode === 13){
-                console.log(this.vimObject.vimCommand.value)
-                this.vimObject.closeVim()
+    /**
+     * 주어진 인자(파일)이 존재하는 파일인지 확인 후 존재하는 파일이라면 열람 및 쓰기 권한 확인
+     * w권한이 없다면 쓰기후 저장 불가 
+     * 없는 파일이라면 생성후 파일 내용 쓰기 
+     */
+    vim(fname){
+        const currentFolder = this.computer.currentPath 
+        let file = undefined
+        if(currentFolder.hasFile(fname)){
+            file = currentFolder.searchFile(fname)
+            if(!this.computer.verifyPermissionAtFile(file, 'r')){
+                return `vim: Permission denied`
             }
-        })
+        }else{
+            let user = this.computer.getUser(this.computer.logOnUser)
+            if(user == null){
+                return `vim: Invalid user`
+            }
+            // 파일 생성 권한 확인
+            if(!this.computer.verifyPermissionAtFolder(currentFolder, 'w')
+            || !this.computer.verifyPermissionAtFolder(currentFolder, 'x')){
+            return `vim: Permission denied`
+        }
+            file = new File(fname, '', user.name, 'rwx', 'r--')
+            currentFolder.addFile(file)
+        }
+        // 열람 후 wq했을 때 w 권한 확인
+        this.vimObject.openVim(file)
 
-        this.vimObject.vimDocument.addEventListener('keypress', ({keyCode}) => {
-            // Insert 모드일때만 반응 - N 
-            if(keyCode == 110){
-                this.vimObject.setNormalVim()
-            }
-            // Normal 모드일때만 반응 - I 
-            else if(keyCode == 105){
-                this.vimObject.setInsertVim()
-            }
-        })
+        return `vim: Successfully!`
     }
-    */
+    // vim을 닫을 때 내용 저장 해당 함수 호출 vimObject에서 호출함 
+    closeVim(file, fdata){
+        // 해당 파일이 w권한이 있는지 확인
+        if(!this.computer.verifyPermissionAtFile(file, 'w')){
+            return `vim: Permission denied`
+        }
+        this.computer.writeFile(file, fdata)
+    }
 
     // 주어진 파일의 mod를 변경한다. 
     chmod(option, ownerMode, otherMode, fname){
@@ -472,7 +489,7 @@ export class Commander{
             return `touch: '${filename}': Already Exist`
         }
         const user = this.computer.logOnUser
-        const file = new File(filename, '', user, 'rw-', 'r--')
+        const file = new File(filename, '', user, 'rwx', 'r--')
         folder.addFile(file)
         return `Successfully touch new file!`
     }

@@ -36,15 +36,15 @@ export class Log{
         this.makeLogFile()
         switch(type){
             case 'auth':
-                this.authLog.writeData(`[${new Date().toLocaleString()}] ${msg}`)
+                this.authLog.appendData(`[${new Date().toLocaleString()}] ${msg}`)
                 break 
 
             case 'history':
-                this.historyLog.writeData(`[${new Date().toLocaleString()}] ${msg}`)
+                this.historyLog.appendData(`[${new Date().toLocaleString()}] ${msg}`)
                 break
 
             case 'system':
-                this.sysLog.writeData(`[${new Date().toLocaleString()}] ${msg}`)
+                this.sysLog.appendData(`[${new Date().toLocaleString()}] ${msg}`)
         }
     }
 }
