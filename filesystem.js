@@ -85,20 +85,28 @@ export class Folder extends FileStat{
 
     removeFolder(folder){
         let index = this.folders.indexOf(folder)
+        if(index == -1) return 
         this.folders.splice(index, 1)
     }
 
     removeFile(file){
         let index = this.files.indexOf(file)
+        if(index == -1) return
         this.files.splice(index, 1)
     }
 
     addFolder(folder){
+        if(this.searchFolder(folder.name)){
+            return
+        }
         this.folders.push(folder)
         this.count+=1
     }
 
     addFile(file){
+        if(this.searchFile(file.name)){
+            return
+        }
         this.files.push(file)
         this.count+=1
     }

@@ -43,6 +43,11 @@
 - [X] analysis  현재 컴퓨터를 분석한다. (포트개방여부, 램, cpu, 등등)
 - [X] VIM       가상의 편집기를 오픈한다. [FILENAME]
 
+- [ ] mail      메일을 보내거나 받은 메일을 읽는다. 
+OPTION : [-S] [CONTENT] [User@IP]   메일을 해당 user의 ip로 보냄 
+OPTION : [-R]   로그인된 계정의 메일을 읽음  
+
+
 ## 파일 시스템 
 ```
 /

@@ -25,11 +25,33 @@ class Service{
 export class MailService extends Service{
     constructor(comp, fname){
         super(comp, fname)
+        this.root.addFolder(new Folder('account', 'root', 'rwx', 'r-x'))
+        this.accountFolder = this.root.searchFolder('account')
         this.initFileSystem()
+    }
+    /**
+     * 존재하는 유저마다 inbox, sent 폴더 생성 
+     * mail - account - user - inbox / sent 
+     *                - user - inbox / sent 
+     */
+    initFileSystem(){
+        this.computer.log.writeLog('Starting... Mail Service...:\u2003[ OK ]', 'system')
+        const users = this.computer.users 
+        users.forEach(user => {
+            this.accountFolder.addFolder(new Folder(user.name, 'root', 'rwx', 'r-x'))
+            const userFolder = this.accountFolder.searchFolder(user.name)
+            userFolder.addFolder(new Folder('inbox', 'root', 'rwx', 'r-x'))
+            userFolder.addFolder(new Folder('sent', 'root', 'rwx', 'r-x'))
+        });
+        this.computer.log.writeLog('Success Load Mail Server:\u2003[ OK ]', 'system')
+    }
+
+    sendMail(){
 
     }
-    initFileSystem(){
-    
+
+    readMail(){
+
     }
 
     update(){
