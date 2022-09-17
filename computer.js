@@ -1,5 +1,5 @@
 import {LOW_SECURITY, MIDDLE_SECURITY, HIGH_SECURITY} from './config.js'
-import {FileSystem} from './filesystem.js'
+import {FileSystem, File, Folder} from './filesystem.js'
 import {Commander} from './commander.js'
 import {MailService, MissionService} from './service.js'
 import {User} from './user.js'
@@ -24,7 +24,7 @@ export class Computer{
         this.log = undefined
         this.connectedIP = undefined
         this.status = undefined
-        
+        this.config = undefined
         this.load(node)
     }
 
@@ -127,6 +127,13 @@ export class Computer{
 
         // computer power on 
         this.turnOn()
+
+        // computer 기본 정보 파일 시스템 기입 
+        this.config = node.os
+        if(this.fileSystem.root.hasFolder('etc')){
+            const folder = this.fileSystem.root.searchFolder('etc')
+            folder.addFile(new File('issue', `${this.config.name} ${this.config.version} LTS`, 'root', 'rwx', 'rw-'))
+        }
     }
 
     /**
@@ -414,10 +421,20 @@ export class Computer{
 
     /**
      * @param {string} command 명령어 문자열
+     * @param {string} type    term명령어 인지, vim 명령어 인지 확인
      * @returns 명령어의 수행 결과 반환
      * 추후 명령어의 argument 처리 시스템 도입 예정
      */
-    execute(command){
+    execute(command, type){
+        if(type == 'VIM'){
+            switch(command){
+                case 'wq':
+                    const result = this.os.vim.closeVim() 
+                    return this.commander.closeVim(result.file, result.fdata)
+                default:
+                    return `vim: Invalid Option`
+            }
+        }
         let commandParse = command.trim().split(' ')
         let com = commandParse[0]
         let argv = commandParse.slice(1)
@@ -532,6 +549,7 @@ export class Computer{
         }
     }
 
+    // 프레임마다 체크해야하는 것들
     update(){
         /*
         this.services.forEach(service => {

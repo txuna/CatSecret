@@ -14,8 +14,8 @@ export class Commander{
     constructor(comp, Os){
         this.computer = comp 
         this.os = Os
-        this.vimObject = new Vim(this)
     }
+
 
     writeLogWithIP(msg, type){
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
@@ -48,17 +48,19 @@ export class Commander{
             currentFolder.addFile(file)
         }
         // 열람 후 wq했을 때 w 권한 확인
-        this.vimObject.openVim(file)
+        this.os.vim.openVim(file)
 
-        return `vim: Successfully!`
+        return `vim: Successfully open`
     }
     // vim을 닫을 때 내용 저장 해당 함수 호출 vimObject에서 호출함 
     closeVim(file, fdata){
+        
         // 해당 파일이 w권한이 있는지 확인
         if(!this.computer.verifyPermissionAtFile(file, 'w')){
             return `vim: Permission denied`
         }
         this.computer.writeFile(file, fdata)
+        return `vim: Successfully close`
     }
 
     // 주어진 파일의 mod를 변경한다. 
@@ -194,7 +196,7 @@ export class Commander{
         this.writeLogWithIP(`run command 'reboot'`, 'history')
         this.computer.turnOff()
         // 5초뒤 설정
-        // that을 지정해주어야 함 
+        // that을 지정해주어야 함 추후 update frame으로 변경 
         let that = this
         setTimeout(function(){
             that.computer.turnOn()

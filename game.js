@@ -1,9 +1,46 @@
 import {OS} from './os.js'
 import {Terminal} from './terminal.js'
+import { Vim } from './vim.js'
+
+const NORMAL = true 
+const INSERT = false
 
 export class Game{
     constructor(){
-        this.os = new OS() 
+        // VIM EDITOR
+        this.vim = new Vim()
+        this.vim.vimCommand.addEventListener('keypress', ({keyCode}) => {
+            if(keyCode === 13){
+                // 저장하고 나가기
+                if(this.vim.vimCommand.value == 'wq'){
+                    // 컴퓨터의 IP 및 로그인된 사용자의 계정을 불러온다.
+                    let computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+                    // comp_msg : [tuuna@localhost 경로]#
+                    let comp_msg = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]`
+                    let command_string = this.vim.vimCommand.value
+                    let output = this.os.execute(this.vim.vimCommand.value, 'VIM')
+
+                    let msg = {
+                        'is_command' : true, 
+                        'command' : `vim command: '${command_string}'`, 
+                        'output' : output,
+                        'computer' : comp_msg
+                    }
+                    this.terminal.writeTerminal(msg)
+                }   
+            }
+        })
+
+        this.vim.vimTextarea.addEventListener('keypress', ({keyCode}) => {
+            if(keyCode == 110 && this.vim.mode == INSERT){
+                this.vim.setNormalVim()
+            }
+            else if(keyCode == 105 && this.vim.mode == NORMAL){
+                this.vim.setInsertVim()
+            }
+        })
+
+        this.os = new OS(this.vim) 
         this.terminal = new Terminal()
 
         this.terminal.command.addEventListener('keypress', ({keyCode}) => {
@@ -16,7 +53,7 @@ export class Game{
     }
 
     init(){
-        let computer = this.os.isConncted ? this.os.connectedComputer : this.os.thisComputer
+        let computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
         this.terminal.computer.innerText = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]# `
     }
 
@@ -39,7 +76,7 @@ export class Game{
         // comp_msg : [tuuna@localhost 경로]#
         let comp_msg = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]`
 
-        let output = this.os.execute(this.terminal.command.value)
+        let output = this.os.execute(this.terminal.command.value, 'TERM')
 
         let msg = {
             'is_command' : true, 

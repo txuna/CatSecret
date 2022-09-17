@@ -40,7 +40,11 @@ export const myComputerNode = {
             password : 'guest',
             uid : 1002
         }
-    ]
+    ],
+    os : {
+        version : '1.3.2',
+        name : 'Secure OS'
+    }
 }
 
 export const computerNodeList = [
@@ -75,7 +79,11 @@ export const computerNodeList = [
                 password : 'guest',
                 uid : 1002
             }
-        ]
+        ],
+        os : {
+            version : '1.1.7',
+            name : 'Red Hat OS'
+        }
     },
     {
         interface : {
@@ -108,6 +116,10 @@ export const computerNodeList = [
                 password : 'guest',
                 uid : 1002
             }
-        ]
+        ],
+        os : {
+            version : '1.1.2',
+            name : 'Fedora OS'
+        }
     }
 ]

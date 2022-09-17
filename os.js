@@ -8,7 +8,7 @@ import {computerNodeList} from './config.js'
  * 사용자의 명령은 isConnected에 따라 원격접속 컴퓨터인지 로컬컴퓨터인지 확인
  */
 export class OS{
-    constructor(){
+    constructor(vim){
         this.networkNodes = []
         this.baseRam = 4
         this.additionalRam = 0
@@ -18,6 +18,7 @@ export class OS{
         this.connectedComputer = undefined
         this.isConnected = undefined
         this.program = new Program()
+        this.vim = vim
 
         this.init()
     }
@@ -36,15 +37,15 @@ export class OS{
     /**
      * 
      * @param {string} command 명령어 문자열 
+     * @param {string} type    해당 명령어가 VIM명령어인지 TERM명령어인지 확인
      * @returns 명령어의 수행결과 반환
      */
-    execute(command){
+    execute(command, type){
         let result 
-
         if(this.isConnected){
-            result = this.connectedComputer.execute(command)
+            result = this.connectedComputer.execute(command, type)
         }else{
-            result = this.thisComputer.execute(command)
+            result = this.thisComputer.execute(command, type)
         }
         return result
     }
