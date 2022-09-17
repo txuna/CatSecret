@@ -161,11 +161,13 @@ export class File extends FileStat{
     }
 
     writeData(fdata){
+        this.modifyAt = new Date().toLocaleString()
         this.data = `${fdata}\n`
         this.size = this.data.length * ALIGN_SIZE
     }
 
     appendData(fdata){
+        this.modifyAt = new Date().toLocaleString()
         this.data += `${fdata}\n`
         this.size = this.data.length * ALIGN_SIZE
     }
