@@ -19,13 +19,26 @@ export class Computer{
         this.currentPath = this.fileSystem.root
         this.navigationPath = [] // Folder 이동 경로 집어넣음
         this.users = []
-        this.logOnUser = undefined  
+        this.logOnUser = undefined
         this.history = []
         this.log = undefined
         this.connectedIP = undefined
         this.status = undefined
         this.config = undefined
         this.load(node)
+    }
+
+    /**
+     * 서비스 객체를 return 한다. 
+     * @param {String} serviceName 구하려는 서비스 이름 
+     */
+    getServiceFromName(serviceName){
+        for(const service of this.services){
+            if(service.serviceName == serviceName){
+                return service
+            }
+        }
+        return null
     }
 
     /**
@@ -119,10 +132,10 @@ export class Computer{
 
         // Service init 
         this.services.push(
-            new MailService(this, "mail")
+            new MailService(this.os, this, "mail")
         )
         this.services.push(
-            new MissionService(this, "mission")
+            new MissionService(this.os, this, "mission")
         )
 
         // computer power on 
@@ -442,6 +455,16 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+            case 'mail':
+                if(argv[0] == '-s'){
+                    return this.commander.sendMail()
+                }else if(argv[0] == '-r'){
+                    return this.commander.readMail()
+                }else{
+                    return `Usage: mail [-s] [CONTENT] [ADDRESS]\n
+                            Usage: mail [-r]` 
+                }
+
             case 'vim':
                 if(commandParse.length == 2){
                     return this.commander.vim(argv[0])

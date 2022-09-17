@@ -1,6 +1,5 @@
 import {Computer} from './computer.js'
 import { File, Folder } from './filesystem.js'
-import  {Vim} from './vim.js'
 
 /**
  *  컴퓨터에 존재하는 명령어를 실행하는 클래스
@@ -16,9 +15,25 @@ export class Commander{
         this.os = Os
     }
 
-
     writeLogWithIP(msg, type){
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
+    }
+
+    sendMail(){
+
+    }
+
+    //현재 로그인된 계정에 있는 mail을 읽어온다. 
+    readMail(){
+        const user = this.computer.getUser(this.computer.logOnUser)
+        if(user == null){
+            return `mail: Invalid user`
+        }
+        const service = this.computer.getServiceFromName('mail')
+        if(service == null){
+            return `mail: Service Error`
+        }
+        return service.readMail(user.name)
     }
 
     /**
@@ -27,36 +42,40 @@ export class Commander{
      * 없는 파일이라면 생성후 파일 내용 쓰기 
      */
     vim(fname){
+        this.writeLogWithIP(`run command vim '${fname}'`, 'history')
         const currentFolder = this.computer.currentPath 
         let file = undefined
         if(currentFolder.hasFile(fname)){
             file = currentFolder.searchFile(fname)
             if(!this.computer.verifyPermissionAtFile(file, 'r')){
+                this.writeLogWithIP(`'vim': Permission denied`, 'history')
                 return `vim: Permission denied`
             }
         }else{
             let user = this.computer.getUser(this.computer.logOnUser)
             if(user == null){
+                this.writeLogWithIP(`'vim': Invalid user`, 'history')
                 return `vim: Invalid user`
             }
             // 파일 생성 권한 확인
             if(!this.computer.verifyPermissionAtFolder(currentFolder, 'w')
             || !this.computer.verifyPermissionAtFolder(currentFolder, 'x')){
-            return `vim: Permission denied`
+                this.writeLogWithIP(`'vim': Permission denied`, 'history')
+                return `vim: Permission denied`
         }
             file = new File(fname, '', user.name, 'rwx', 'r--')
             currentFolder.addFile(file)
         }
         // 열람 후 wq했을 때 w 권한 확인
         this.os.vim.openVim(file)
-
         return `vim: Successfully open`
     }
+
     // vim을 닫을 때 내용 저장 해당 함수 호출 vimObject에서 호출함 
     closeVim(file, fdata){
-        
         // 해당 파일이 w권한이 있는지 확인
         if(!this.computer.verifyPermissionAtFile(file, 'w')){
+            this.writeLogWithIP(`'vim': Permission denied`, 'history')
             return `vim: Permission denied`
         }
         this.computer.writeFile(file, fdata)

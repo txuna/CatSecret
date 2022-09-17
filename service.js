@@ -2,11 +2,13 @@ import {Folder, File} from './filesystem.js'
 
 /**
  * 백그라운드에서 돌아가는 Daemon Service
+ * @param {OS} os os class 
  * @param {Computer} comp Computer Class 
  * @param {string} fname root Folder Name
  */
 class Service{
-    constructor(comp, fname){
+    constructor(os, comp, fname){
+        this.os = os
         this.computer = comp 
         this.serviceName = fname
         this.computer.fileSystem.root.addFolder(new Folder(this.serviceName, 'root', 'rwx', 'r-x'))
@@ -23,12 +25,13 @@ class Service{
 }
 
 export class MailService extends Service{
-    constructor(comp, fname){
-        super(comp, fname)
+    constructor(os, comp, fname){
+        super(os, comp, fname)
         this.root.addFolder(new Folder('account', 'root', 'rwx', 'r-x'))
         this.accountFolder = this.root.searchFolder('account')
         this.initFileSystem()
     }
+
     /**
      * 존재하는 유저마다 inbox, sent 폴더 생성 
      * mail - account - user - inbox / sent 
@@ -44,14 +47,122 @@ export class MailService extends Service{
             userFolder.addFolder(new Folder('sent', 'root', 'rwx', 'r-x'))
         });
         this.computer.log.writeLog('Success Load Mail Server:\u2003[ OK ]', 'system')
+
+        this.dumpMail()
     }
 
-    sendMail(){
-
+    // 덤프 형식의 메일
+    dumpMail(){
+        if(this.computer.interface.ip == '13.23.27.8'){
+            let content = this.createMailContent(`Hey, We observed your hacking.
+            we appreciate your hacking abillity!\
+            can you join my team?`, 'n00dles@13.23.27.8')
+            this.sendMail('n00dles', content, 'tuuna', '127.0.0.1')
+        } else if(this.computer.interface.ip == '72.38.171.9'){
+        
+            let content = this.createMailContent('We Looking forward to meeting you~!', 'troy@72.38.171.9')
+            this.sendMail('troy', content, 'tuuna', '127.0.0.1')
+        }
     }
 
-    readMail(){
+    /**
+     * title date content from 형식 맞춰서 content 재작성
+     * @param {*} content 
+     */
+    createMailContent(content, from){
+        const title = 'This is Title'
+        let msg = `
+        [Title]
+        ${title}
+        [Date]
+        ${new Date().toLocaleString()}
+        [Content]
+        ${content}
+        [From]
+        '${from}'
+        `
+        return msg
+    }
 
+    /**
+     * from -> to 메일을 보낸다. 보내는 계정에는 sent에 있어야 하며, 받는사람은 inbox에 있어야 함
+     * to의 computer를 os의 networkNodes로부터 가져와야 함
+     *  
+     * 제목은 어케?
+     * @param {String} fromUser 
+     * @param {String} fromIP 
+     * @param {String} content 
+     * @param {String} toUser 
+     * @param {String} toIP 
+     */
+    sendMail(from, content, toUser, toIP){
+        let toComputer = undefined
+        if(this.os.thisComputer.interface.ip == toIP){
+            toComputer = this.os.thisComputer
+        }else{
+            toComputer = this.os.getComputerNodeFromIP(toIP)
+            if(toComputer == null){
+                return null
+            }
+        }
+        const user = this.computer.getUser(from)
+        if(user == null){
+            return null
+        }
+
+        // 발신 컴퓨터 sent에 생성 
+        if(!this.accountFolder.hasFolder(user.name)){
+            return null
+        }
+        const userFolder = this.accountFolder.searchFolder(user.name)
+        if(!userFolder.hasFolder('sent')){
+            return null
+        }
+        const sentFolder = userFolder.searchFolder('sent')
+        sentFolder.addFile(new File(`${sentFolder.files.length}`, content, user.name, 'rwx', 'r-x'))
+        
+        // 수신 컴퓨터 inbox에 생성 
+        const toComputerMailService = toComputer.getServiceFromName('mail')
+        toComputerMailService.recieveMail(toUser, content)
+    }
+
+    /**
+     * 다른 컴퓨터로부터 받은 메일을 저장한다.
+     * @param {String} toUser 
+     * @param {String} content 
+     */
+    recieveMail(toUser, content){
+        console.log(this.computer.interface.ip, 'recieved!')
+        const user = this.computer.getUser(toUser)
+        if(user == null){
+            return 
+        }
+        if(!this.accountFolder.hasFolder(user.name)){
+            return
+        }
+        const userFolder = this.accountFolder.searchFolder(user.name)
+        if(!userFolder.hasFolder('inbox')){
+            return
+        }
+        const inboxFolder = userFolder.searchFolder('inbox')
+        inboxFolder.addFile(new File(`${inboxFolder.files.length}`, content, user.name, 'rwx', 'r-x'))
+    }
+
+    readMail(username){
+        let output = ''
+
+        if(!this.accountFolder.hasFolder(username)){
+            return null
+        }
+        const userFolder = this.accountFolder.searchFolder(username)
+        if(!userFolder.hasFolder('inbox')){
+            return null
+        }
+        const inboxFolder = userFolder.searchFolder('inbox')
+        inboxFolder.files.forEach(file => {
+            output += `${file.readData()}\n\n`
+        })
+        return output
     }
 
     update(){
@@ -61,8 +172,8 @@ export class MailService extends Service{
 
 
 export class MissionService extends Service{
-    constructor(comp, fname){
-        super(comp, fname)
+    constructor(os, comp, fname){
+        super(os, comp, fname)
         this.initFileSystem()
     }
 

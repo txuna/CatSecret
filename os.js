@@ -35,6 +35,20 @@ export class OS{
     }
 
     /**
+     * network노드들중에서 인자로 주어진 ip를 가진 컴퓨터를 반환한다. 
+     * @param {String} ip 
+     * @returns NULL OR Computer
+     */
+    getComputerNodeFromIP(ip){
+        for(const computer of this.networkNodes){
+            if(computer.interface.ip == ip){
+                return computer
+            }
+        }
+        return null
+    }
+
+    /**
      * 
      * @param {string} command 명령어 문자열 
      * @param {string} type    해당 명령어가 VIM명령어인지 TERM명령어인지 확인
