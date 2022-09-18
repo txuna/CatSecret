@@ -1,9 +1,28 @@
+import {PortHack} from './tools.js'
+import { PROCESS_RAM } from './config.js'
 
-/**
- * 명령어가 아닌 프로그램을 구성 해당 프로그램은 정해진 시간만큼 update가 지속적 호출
- */
 export class Program{
-    constructor(){
+    constructor(os, terminal){
+        this.os = os
+        this.terminal = terminal
+    }
 
+    execute(command, user){
+        let parse = command.trim().split(' ')
+        let com = parse[0]
+        let argv = parse.slice(1)
+        switch(com){
+            case 'PortHack.exe':
+                if(this.os.usedRam + PROCESS_RAM.PortHack > this.os.totalRam){
+                    return `Exceed RAM..! Please Upgrade RAM!`
+                }
+                this.os.exeProcessList.push(
+                    new PortHack(this.os, this.terminal, command, user)
+                )
+                return `PortHack.exe is running!`
+
+            default:
+                return `Invalid Program`
+        }
     }
 }

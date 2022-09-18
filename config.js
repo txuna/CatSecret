@@ -9,6 +9,10 @@ export const NONE_BIT = 0
 export const WRITE_BIT = 1 
 export const READ_BIT = 2
 
+export const PROCESS_RAM = {
+    PortHack : 2
+}
+
 export const myComputerNode = {
     interface : {
         ip : '127.0.0.1',
@@ -113,7 +117,7 @@ export const computerNodeList = [
         ports : [
             {
                 num : 22, 
-                status : true
+                status : false
             },{
                 num : 3306,
                 status : true

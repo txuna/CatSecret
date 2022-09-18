@@ -1,24 +1,26 @@
 import {Computer} from './computer.js'
-import {Program} from './program.js'
-import {myComputerNode} from './config.js'
+import {myComputerNode, PROCESS_RAM} from './config.js'
 import {computerNodeList} from './config.js'
+import { Program } from './program.js'
 
 /**
  * 사용자의 명령 수행 및 컴퓨터 관리, 실행프로세스 관리 
  * 사용자의 명령은 isConnected에 따라 원격접속 컴퓨터인지 로컬컴퓨터인지 확인
  */
 export class OS{
-    constructor(vim){
+    constructor(vim, terminal){
         this.networkNodes = []
         this.baseRam = 4
         this.additionalRam = 0
+        this.usedRam = 0
         this.totalRam = this.baseRam + this.additionalRam
         this.exeProcessList = [] 
         this.thisComputer = false
         this.connectedComputer = undefined
         this.isConnected = undefined
-        this.program = new Program()
         this.vim = vim
+        this.terminal = terminal
+        this.program = new Program(this, this.terminal)
 
         this.init()
     }
@@ -49,27 +51,52 @@ export class OS{
     }
 
     /**
-     * 
+     * 명령을 수행한다. OS에 존재하는 프로그램이냐, 컴퓨터에 존재하는 명령어에 따라 구별
+     * 사용램 체크
      * @param {string} command 명령어 문자열 
      * @param {string} type    해당 명령어가 VIM명령어인지 TERM명령어인지 확인
      * @returns 명령어의 수행결과 반환
      */
     execute(command, type){
         let result 
-        if(this.isConnected){
-            result = this.connectedComputer.execute(command, type)
-        }else{
-            result = this.thisComputer.execute(command, type)
+        const user = this.thisComputer.getUser(this.thisComputer.logOnUser)
+        if(user == null){
+            return `Invalid User`
         }
-        return result
+        if(command.split(' ')[0].includes(
+            'PortHack.exe'
+        )){
+
+            // 프로그램 사용
+            return this.program.execute(command, user)
+
+        }else{
+            // 일반 명령어 
+            if(this.isConnected){
+                result = this.connectedComputer.execute(command, type)
+            }else{
+                result = this.thisComputer.execute(command, type)
+            }
+            return result
+        }
+
+        
+    }
+
+    // 프로세스 상태가 종료된것들 종료
+    endProcess(){
+        this.exeProcessList = this.exeProcessList.filter((process) => (process.isRunning))
     }
 
     update(){
-        /*
+        let tmpRam = 0
         this.exeProcessList.forEach( process => {
             process.update()
+            tmpRam += process.usedRam
         })
-        */
+        this.usedRam = tmpRam
+
+        this.endProcess()
         /*
         if(this.isConnected){
             this.connectedComputer.update()

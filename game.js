@@ -40,8 +40,9 @@ export class Game{
             }
         })
 
-        this.os = new OS(this.vim) 
+        
         this.terminal = new Terminal()
+        this.os = new OS(this.vim, this.terminal) 
 
         this.terminal.command.addEventListener('keypress', ({keyCode}) => {
             if(keyCode === 13){

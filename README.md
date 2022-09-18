@@ -13,6 +13,7 @@
 - [ ] 경로, 파일, 폴더 이름명에 특수문자 제거 
 - [X] computer restart 및 boot log 작성 -> syslog.log
 - [ ] passwd, shadow와 같은 유저 관리 파일 생성
+- [X] 프로그램의 기본적인 형태 구현 - PortHack, RootKit
 
 ## 명령어 
 - [X] help      도움말을 출력한다. 
@@ -50,7 +51,7 @@
 OPTION : [-S] [CONTENT] [User@IP]   메일을 해당 user의 ip로 보냄 
 OPTION : [-R]   로그인된 계정의 메일을 읽음  
 - [X] systemd   서비스 관련 명령어를 내린다. ex) systemd mail stop 
-
+- [X] ps        현재 돌아가는 프로그램의 상태를 출력한다. 
 
 ## 파일 시스템 
 ```

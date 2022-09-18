@@ -19,12 +19,32 @@ export class Commander{
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
     }
 
+    searchTree(top){
+
+    }
+    // 폴더 구성을 tree형태로 보여준다. 
+    tree(){
+        const currentFolder = this.computer.currentPath
+        let output = `${currentFolder.name}`
+        
+        return output
+    }
+
+    // service에 대해 세부설정을 진행한다. root만 가능
     systemd(serviceName, option){
+        const user = this.computer.getUser(this.computer.logOnUser)
+        if(user == null){
+            return `systemd: Invalid user`
+        }
+
         const service = this.computer.getServiceFromName(serviceName)
         if(service == null){
             return `systemd: ${serviceName} Error or Invalid service`
         }
         if(option == 'stop'){
+            if(user.name != 'root'){
+                return `systemd: Permission denied`
+            }
             if(!service.turnOff()){
                 return `systemd: Already stop service`
             }else{
@@ -32,6 +52,9 @@ export class Commander{
             }
         }else if(option == 'start'){
             if(!service.turnOn()){
+                if(user.name != 'root'){
+                    return `systemd: Permission denied`
+                }
                 return `systemd: Already is running service`
             }else{
                 return `systemd: Successfully start service '${serviceName}'`
@@ -351,7 +374,8 @@ export class Commander{
     }
 
     // 해당 ip가 존재하는 노드인지 확인 존재하는 노드라면 해당 노드와 연결
-    // guest의 비밀번호가 변경되었을시 설정가능하게 해야할듯 옵션을 넣듯이 -P 1234 이렇게 
+    // guest의 비밀번호가 변경되었을시 설정가능하게 해야할듯 옵션을 넣듯이 -P 1234 이렇게
+    // connect시 22번 포트 열려있어야 가능 
     connect(ip){
         let flag = false
         if(this.os.isConnected){
@@ -362,6 +386,14 @@ export class Commander{
                 // 만일 해당 컴퓨터가 꺼져있다면 
                 if(node.status == false){
                     return `connect: '${ip}': computer turned off!`
+                }
+                for(const port of node.ports){
+                    console.log(port)
+                    if(port.number == 22){
+                        if(port.status != true){
+                            return `connect: '${ip}': 22 port is closed!`
+                        }
+                    }
                 }
                 //node.commander.login('guest', 'guest')
                 // guest의 비번 변경시 확인 체크 필요
@@ -499,8 +531,14 @@ export class Commander{
     }
 
     ps(){
-
+        let output = `CPU : 1.3%\u2003MEM : ${this.os.usedRam}G / ${this.os.totalRam}G (${(this.os.usedRam / this.os.totalRam * 100).toFixed(1)}%)\n`
+        output += 'USER\u2003PID\u2003MEM\u2003STIME\u2003RTIME\u2003STATUS\u2003COMMAND\n'
+        this.os.exeProcessList.forEach( process => {
+            output += process.status()
+        })
+        return output
     }
+
 
     // File 삭제 
     rm(fname){

@@ -481,7 +481,9 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
-
+            case 'ps':
+                return this.commander.ps()
+                
             case 'systemd':
                 if(commandParse.length == 3){
                     return this.commander.systemd(argv[0], argv[1])
