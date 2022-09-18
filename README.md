@@ -46,6 +46,7 @@
 - [ ] mail      메일을 보내거나 받은 메일을 읽는다. 
 OPTION : [-S] [CONTENT] [User@IP]   메일을 해당 user의 ip로 보냄 
 OPTION : [-R]   로그인된 계정의 메일을 읽음  
+- [ ] systemd   서비스 관련 명령어를 내린다. ex) systemd mail stop 
 
 
 ## 파일 시스템 
@@ -66,6 +67,13 @@ OPTION : [-R]   로그인된 계정의 메일을 읽음
 │   │   config.ini
 └───bin
 └───mail
+│   └───account
+│   │   └───user1
+│   │   │   └───inbox 
+│   │   │   └───sent
+│   │   └───user2 
+│   │   │   └───inbox 
+│   │   │   └───sent
 └───mission
 └───tmp
 ```

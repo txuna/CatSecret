@@ -19,21 +19,61 @@ export class Commander{
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
     }
 
-    sendMail(){
+    systemd(serviceName, option){
 
     }
 
-    //현재 로그인된 계정에 있는 mail을 읽어온다. 
-    readMail(){
-        const user = this.computer.getUser(this.computer.logOnUser)
-        if(user == null){
-            return `mail: Invalid user`
-        }
+    sendMail(command_string){
         const service = this.computer.getServiceFromName('mail')
         if(service == null){
             return `mail: Service Error`
         }
-        return service.readMail(user.name)
+        const user = this.computer.getUser(this.computer.logOnUser)
+        if(user == null){
+            return `mail: Invalid user`
+        }
+
+        let parse = command_string.match(/(?:[^\s"]+|"[^"]*")+/g) 
+        if(parse.length != 5){
+            return `mail: Invalid option`
+        }
+        let title = parse[2].replace(/"/g, '')
+        let content = parse[3].replace(/"/g, '') 
+        let address = parse[4].replace(/"/g, '') 
+        let toUser = address.split('@')[0]
+        let toIP = address.split('@')[1]
+        if(toUser == undefined || toIP == undefined){
+            return `mail: Invalid destination`
+        }
+        console.log(toUser, toIP)
+
+        let msg = service.createMailContent(title, 
+            content, 
+            `${user.name}@${this.computer.interface.ip}`)
+        
+        if(!service.sendMail(user.name, msg, toUser, toIP)){
+            return `mail: Service Error`
+        }else{
+            return `mail: Success sent mail`
+        }
+    }
+
+    //현재 로그인된 계정에 있는 mail을 읽어온다. 
+    readMail(){
+        const service = this.computer.getServiceFromName('mail')
+        if(service == null){
+            return `mail: Service Error`
+        }
+        const user = this.computer.getUser(this.computer.logOnUser)
+        if(user == null){
+            return `mail: Invalid user`
+        }
+        
+        let output = service.readMail(user.name)
+        if(output == null){
+            return `mail: Service Error`
+        }
+        return output
     }
 
     /**

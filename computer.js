@@ -457,7 +457,7 @@ export class Computer{
         switch(com){
             case 'mail':
                 if(argv[0] == '-s'){
-                    return this.commander.sendMail()
+                    return this.commander.sendMail(command)
                 }else if(argv[0] == '-r'){
                     return this.commander.readMail()
                 }else{
