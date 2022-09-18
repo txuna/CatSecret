@@ -29,6 +29,18 @@ export class Computer{
     }
 
     /**
+     * 유저마다의 폴더 생성 root 제외 
+     */
+    createUserHomeFolder(){
+        const homeFolder = this.fileSystem.root.searchFolder('home')
+        this.users.forEach(user=>{
+            if(!homeFolder.hasFolder(user.name) && user.name != 'root'){
+                homeFolder.addFolder(new Folder(user.name, user.name, 'rwx', 'r-x'))
+            }
+        })
+    }
+
+    /**
      * 서비스 객체를 return 한다. 
      * @param {String} serviceName 구하려는 서비스 이름 
      */
@@ -158,6 +170,9 @@ export class Computer{
             const folder = this.fileSystem.root.searchFolder('etc')
             folder.addFile(new File('issue', `${this.config.name} ${this.config.version} LTS`, 'root', 'rwx', 'rw-'))
         }
+
+        // user home folder 생성
+        this.createUserHomeFolder()
     }
 
     /**
