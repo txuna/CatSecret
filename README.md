@@ -43,10 +43,10 @@
 - [X] analysis  현재 컴퓨터를 분석한다. (포트개방여부, 램, cpu, 등등)
 - [X] VIM       가상의 편집기를 오픈한다. [FILENAME]
 - [ ] tree      현재 위치에서의 파일시스템 구조를 트리형식으로 출력한다.
-- [ ] mail      메일을 보내거나 받은 메일을 읽는다. 
+- [X] mail      메일을 보내거나 받은 메일을 읽는다. 
 OPTION : [-S] [CONTENT] [User@IP]   메일을 해당 user의 ip로 보냄 
 OPTION : [-R]   로그인된 계정의 메일을 읽음  
-- [ ] systemd   서비스 관련 명령어를 내린다. ex) systemd mail stop 
+- [X] systemd   서비스 관련 명령어를 내린다. ex) systemd mail stop 
 
 
 ## 파일 시스템 

@@ -7,14 +7,14 @@ import {Folder, File} from './filesystem.js'
  * @param {string} fname root Folder Name
  */
 class Service{
-    constructor(os, comp, fname){
+    constructor(os, comp, fname, status){
         this.os = os
         this.computer = comp 
         this.serviceName = fname
         this.computer.fileSystem.root.addFolder(new Folder(this.serviceName, 'root', 'rwx', 'r-x'))
         // root는 해당 Daemon Service가 접근할 수 있는 최상위 Directory
         this.root = this.computer.fileSystem.root.searchFolder(this.serviceName)
-        this.status = true 
+        this.status = status
     }
 
     /**
@@ -28,7 +28,7 @@ class Service{
         if(!this.status){
             return false
         }
-        this.computer.log.writeLog('Stop... Mail Service...:\u2003[ OK ]', 'system')
+        this.computer.log.writeLog(`Stop... ${this.serviceName} Service...:\u2003[ OK ]`, 'system')
         this.status = false
         return true
     }
@@ -37,15 +37,21 @@ class Service{
         if(this.status){
             return false
         }
-        this.computer.log.writeLog('Starting... Mail Service...:\u2003[ OK ]', 'system')
+        this.computer.log.writeLog(`Starting... ${this.serviceName} Service...:\u2003[ OK ]`, 'system')
         this.status = true
         return true
+    }
+
+    getStatus(){
+        let status = this.status? 'RUNNING' : 'OFF'
+        let output = `Service ${this.serviceName}:\u2003[ ${status} ]\n`
+        return output
     }
 }
 
 export class MailService extends Service{
-    constructor(os, comp, fname){
-        super(os, comp, fname)
+    constructor(os, comp, fname, status){
+        super(os, comp, fname, status)
         this.root.addFolder(new Folder('account', 'root', 'rwx', 'r-x'))
         this.accountFolder = this.root.searchFolder('account')
         this.initFileSystem()
@@ -206,8 +212,8 @@ export class MailService extends Service{
 
 
 export class MissionService extends Service{
-    constructor(os, comp, fname){
-        super(os, comp, fname)
+    constructor(os, comp, fname, status){
+        super(os, comp, fname, status)
         this.initFileSystem()
     }
 

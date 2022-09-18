@@ -20,7 +20,27 @@ export class Commander{
     }
 
     systemd(serviceName, option){
-
+        const service = this.computer.getServiceFromName(serviceName)
+        if(service == null){
+            return `systemd: ${serviceName} Error or Invalid service`
+        }
+        if(option == 'stop'){
+            if(!service.turnOff()){
+                return `systemd: Already stop service`
+            }else{
+                return `systemd: Successfully stop service '${serviceName}'`
+            }
+        }else if(option == 'start'){
+            if(!service.turnOn()){
+                return `systemd: Already is running service`
+            }else{
+                return `systemd: Successfully start service '${serviceName}'`
+            }
+        }else if(option ='status'){
+            return service.getStatus()
+        }else{
+            return `systemd: Invalid option`
+        }
     }
 
     sendMail(command_string){
@@ -45,7 +65,6 @@ export class Commander{
         if(toUser == undefined || toIP == undefined){
             return `mail: Invalid destination`
         }
-        console.log(toUser, toIP)
 
         let msg = service.createMailContent(title, 
             content, 
@@ -229,6 +248,11 @@ export class Commander{
         this.computer.ports.forEach( port => {
             let status = port.status? 'OPEN' : 'CLOSE'
             output += `PORT ${port.number}:\u2003[ ${status} ]\n`
+        })
+        output += `Service Scanning...\n`
+        this.computer.services.forEach( service => {
+            let status = service.status? 'RUNNING' : 'OFF'
+            output += `Service ${service.serviceName}:\u2003[ ${status} ]\n`
         })
         this.writeLogWithIP(`run command 'analysis'`, 'history')
         return output

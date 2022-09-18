@@ -123,6 +123,7 @@ export class Computer{
                 port.num, port.status
             ))
         })
+
         // load user 
         node.users.forEach( user => {
             this.users.push( new User(
@@ -131,12 +132,22 @@ export class Computer{
         })
 
         // Service init 
+        node.services.forEach( service => {
+            if(service.name == 'mail'){
+                this.services.push(new MailService(this.os, this, "mail", service.status))
+            }else if(service.name == 'mission'){
+                this.services.push(new MissionService(this.os, this, "mission", service.status))
+            }
+        })
+        /*
+        // Service init 
         this.services.push(
             new MailService(this.os, this, "mail")
         )
         this.services.push(
             new MissionService(this.os, this, "mission")
         )
+        */
 
         // computer power on 
         this.turnOn()
@@ -455,6 +466,14 @@ export class Computer{
         this.history.push(command)
 
         switch(com){
+
+            case 'systemd':
+                if(commandParse.length == 3){
+                    return this.commander.systemd(argv[0], argv[1])
+                }else{
+                    return `Usae: systemd [SERVICE NAME] [OPTION]`
+                }
+
             case 'mail':
                 if(argv[0] == '-s'){
                     return this.commander.sendMail(command)

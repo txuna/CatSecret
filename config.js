@@ -41,6 +41,16 @@ export const myComputerNode = {
             uid : 1002
         }
     ],
+    services:[
+        {
+            name : 'mail',
+            status : true
+        },
+        {
+            name : 'mission',
+            status : true
+        }
+    ],
     os : {
         version : '1.3.2',
         name : 'Secure OS'
@@ -80,6 +90,16 @@ export const computerNodeList = [
                 uid : 1002
             }
         ],
+        services:[
+            {
+                name : 'mail',
+                status : true
+            },
+            {
+                name : 'mission',
+                status : true
+            }
+        ],
         os : {
             version : '1.1.7',
             name : 'Red Hat OS'
@@ -115,6 +135,16 @@ export const computerNodeList = [
                 name : 'guest',
                 password : 'guest',
                 uid : 1002
+            }
+        ],
+        services:[
+            {
+                name : 'mail',
+                status : false
+            },
+            {
+                name : 'mission',
+                status : true
             }
         ],
         os : {
