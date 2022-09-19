@@ -4,6 +4,8 @@ const FPS = 60
 /**
  * 명령어가 아닌 프로그램을 구성 해당 프로그램은 정해진 시간만큼 update가 지속적 호출
  * 프로그램이 실행중에는 명령어 입력 비활성화
+ * 컴퓨터의 securityLevel에 따라 달라짐
+ * 실행 도중 다른 PC로 connect시 성공완료 되어도 네트워크환경 ERROR 뜨게 하기
  */
 class Tool{
     /**
@@ -25,16 +27,31 @@ class Tool{
         this.user = user
         this.command = command
         this.startTime = ''
+        this.thisIP = undefined
     }
 
     run(){
+        const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        this.thisIP = computer.interface.ip
         this.isRunning = true
         let date = new Date()
         this.startTime = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     }
 
     update(){
-
+        if(!this.isRunning){
+            return
+        }
+        if(this.runningTime == this.programTime){
+            let msg = {
+                'is_command' : false, 
+                'output' : `Program: '${this.toolName}' is Finished!`,
+            }
+            this.terminal.writeTerminal(msg)
+            this.finished()
+        }else{
+            this.runningTime+=1
+        }
     }
     
     status(){
@@ -54,6 +71,16 @@ export class PortHack extends Tool{
         this.run()
     }
 
+    // PORT OPEN
+    finished(){
+        this.isRunning = false
+        const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        if(computer.interface.ip != this.thisIP){
+
+        }
+    }
+
+    /*
     update(){
         if(!this.isRunning){
             return
@@ -61,21 +88,41 @@ export class PortHack extends Tool{
         if(this.runningTime == this.programTime){
             let msg = {
                 'is_command' : false, 
-                'output' : `PORT HACKED!`,
+                'output' : `Program: '${this.toolName}' is Finished!`,
             }
             this.terminal.writeTerminal(msg)
-            this.isRunning = false
+            this.finished()
         }else{
             this.runningTime+=1
         }
     }
+    */
 }
 
 /**
  * 현재 연결된 컴퓨터의 계정을 root로 변경한다. 
  */
 export class RootKit extends Tool{
-    constructor(){
+    constructor(os, terminal, command, user){
+        super(os, 5 * FPS, terminal, 'RootKit', 1.3, command, user)
+        this.runningTime = 0
+        this.run()
+    }
 
+    // GET ROOT
+    finished(){
+        const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        this.isRunning = false
+        if(computer.interface.ip != this.thisIP){
+            let msg = {
+                'is_command' : false, 
+                'output' : `RootKit: Network Error...!`,
+            }
+            this.terminal.writeTerminal(msg)
+            return
+        }
+        computer.loginRoot()
+        let comp_msg = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]`
+        this.terminal.computer.innerText = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]# `
     }
 }

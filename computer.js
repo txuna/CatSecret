@@ -14,7 +14,7 @@ export class Computer{
         this.services = [] 
         this.fileSystem = new FileSystem(true) 
         this.ports = []  //Ports
-        this.securityLevel = LOW_SECURITY
+        this.securityLevel = undefined
         this.commander = new Commander(this, this.os)
         this.currentPath = this.fileSystem.root
         this.navigationPath = [] // Folder 이동 경로 집어넣음
@@ -115,6 +115,13 @@ export class Computer{
         }
         return false
     }
+    
+    /**
+     * root로 로그인
+     */
+    loginRoot(){
+        this.logOnUser = 'root'
+    }
 
     /**
      * 기본적인 컴퓨터 정보를 기반으로 각종 초기 설정을 진행한다. 
@@ -125,6 +132,9 @@ export class Computer{
         let folder = this.fileSystem.root.searchFolder('var')
         folder = folder.searchFolder('log')
         this.log = new Log(folder)
+
+        // securityLevel init 
+        this.securityLevel = node.securityLevel
 
         // network init
         this.interface = node.interface 

@@ -63,10 +63,13 @@ export class OS{
         if(user == null){
             return `Invalid User`
         }
-        if(command.split(' ')[0].includes(
-            'PortHack.exe'
-        )){
-
+        let flag = false 
+        for(const name of ['PortHack.exe', 'RootKit.exe']){
+            if(command.split(' ')[0].includes(name)){
+                flag = true
+            }
+        }
+        if(flag){
             // 프로그램 사용
             return this.program.execute(command, user)
 

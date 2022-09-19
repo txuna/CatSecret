@@ -1,5 +1,6 @@
 import {Computer} from './computer.js'
 import { File, Folder } from './filesystem.js'
+import { LOW_SECURITY, MIDDLE_SECURITY, HIGH_SECURITY } from './config.js'
 
 /**
  *  컴퓨터에 존재하는 명령어를 실행하는 클래스
@@ -263,8 +264,19 @@ export class Commander{
 
     // 현재 컴퓨터를 분석한다. 
     analysis(){
+        let secutiry = ''
+        if(this.computer.securityLevel == LOW_SECURITY){
+            secutiry = 'LOW SECURITY'
+        }else if(this.computer.securityLevel == MIDDLE_SECURITY){
+            secutiry = 'MIDDLE SECURITY'
+        }else if(this.computer.securityLevel == HIGH_SECURITY){
+            secutiry = 'HIGH SECURITY'
+        }else{
+            secutiry = 'UNKNOWN SECURITY'
+        }
         let output = ''
         output += `Computer Scanning...\n`
+        output += `Secutiry Level:\u2003${this.computer.securityLevel}\n`
         output += `RAM:\u2003${this.os.totalRam}GB\n`
         output += `CPU:\u2003Intel(R) Core(TM) i7-7700K @ 4.20GHz\n`
         output += `Port Scanning...\n`

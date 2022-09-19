@@ -1,4 +1,4 @@
-import {PortHack} from './tools.js'
+import {PortHack, RootKit} from './tools.js'
 import { PROCESS_RAM } from './config.js'
 
 export class Program{
@@ -20,6 +20,15 @@ export class Program{
                     new PortHack(this.os, this.terminal, command, user)
                 )
                 return `PortHack.exe is running!`
+
+            case 'RootKit.exe':
+                if(this.os.usedRam + PROCESS_RAM.RootKit > this.os.totalRam){
+                    return `Exceed RAM..! Please Upgrade RAM!`
+                }
+                this.os.exeProcessList.push(
+                    new RootKit(this.os, this.terminal, command, user)
+                )
+                return `RootKit.exe is running!`
 
             default:
                 return `Invalid Program`

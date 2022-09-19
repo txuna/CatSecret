@@ -10,10 +10,12 @@ export const WRITE_BIT = 1
 export const READ_BIT = 2
 
 export const PROCESS_RAM = {
-    PortHack : 2
+    PortHack : 2,
+    RootKit : 1.5
 }
 
 export const myComputerNode = {
+    securityLevel : HIGH_SECURITY, 
     interface : {
         ip : '127.0.0.1',
         mac : 'AF:13:BF:38:37:C7', 
@@ -63,6 +65,7 @@ export const myComputerNode = {
 
 export const computerNodeList = [
     {
+        securityLevel : LOW_SECURITY, 
         interface : {
             ip : '13.23.27.8',
             mac : 'BF:18:AE:E8:27:C7', 
@@ -110,6 +113,7 @@ export const computerNodeList = [
         }
     },
     {
+        securityLevel : MIDDLE_SECURITY,
         interface : {
             ip : '72.38.171.9',
             mac : 'C2:F4:5E:E1:AC:F8', 
