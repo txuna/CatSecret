@@ -1,9 +1,13 @@
 # Cat Secret 
-주어진 가상의 리눅스를 기반으로 네트워크에 연결된 PC를 탐험하는 게임! 
+주어진 가상의 리눅스를 기반으로 네트워크에 연결된 PC를 탐험하고 정보를 수집하고 해킹하며 미션을 클리어하는 게임입니다. Hacknet 및 Uplink에서 영감을 받아 개발을 진행하고 있습니다.  
 
-# Todo List 
+## Update Log
+[...] ... Commit 참조 
+[2022/09/19] 쉘에서 사용가능한 툴(PortHack.exe, RootKit.exe) 구현
+[2022/09/19] MissionManager Class와 Mission Class의 초안 작성 및 getAdminMission 구현체 작성 
 
-## 기능
+## Todo List 
+### 기능
 - [X] 유저 별로 권한 확인하기 
 - [ ] redirection shell 구현 
 - [X] log 
@@ -16,8 +20,7 @@
 - [ ] passwd, shadow와 같은 유저 관리 파일 생성
 - [X] 프로그램의 기본적인 형태 구현 - PortHack, RootKit
 
-
-## 명령어 
+### 명령어 
 - [X] help      도움말을 출력한다. 
 - [X] history   지금까지 쳤던 명령어를 보여준다. 
 - [X] id        현재 로그인된 계정을 보여준다. 
