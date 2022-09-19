@@ -67,6 +67,15 @@ Mission은 크게 아래와 같다
 - getAdminMission
 
 ## 파일 시스템 
+파일시스템은 크게 FileSystem Class와 폴더와 파일을 이루는 Folder Class와 File Class로 이루어져있다. 
+FileSystem 클래스는 전반적인 컴퓨터의 파일시스템을 구성하고 있으며 root를 통해 root Folder를 가리킨다. 
+
+Folder클래스는 파일시스템에 존재하는 폴더를 의미하며 Property로 Folder Class와 File Class를 가진다. AddFile, AddFolder를 통해서 폴더나 파일을 추가가 가능하다. 
+
+FileStat Class는 Folder Class와 File Class를 상속하고 있으며 사이즈, 소유자, 권한과 같은 stat부분을 관리하는 Class이다.
+
+전반적인 컴퓨터에 존재하는 파일시스템의 디렉토리 구성도는 아래와 같다. 
+
 ```
 /
 └───var
@@ -93,6 +102,28 @@ Mission은 크게 아래와 같다
 │   │   │   └───sent
 └───tmp
 ```
+
+## OS System 
+README.md 작성중... 
+
+## Computer System 
+README.md 작성중...
+
+## Program System 
+README.md 작성중 
+
+## Service System 
+README.md 작성중 
+
+## Commander System 
+README.md 작성중 
+
+## Log System 
+README.md 작성중 
+
+## Terminal System 
+README.md 작성중 
+
 # Image 
 ### Mail Daemon System
 ![image4](./image/cat.png)
