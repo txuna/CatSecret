@@ -2,9 +2,9 @@
 주어진 가상의 리눅스를 기반으로 네트워크에 연결된 PC를 탐험하고 정보를 수집하고 해킹하며 미션을 클리어하는 게임입니다. Hacknet 및 Uplink에서 영감을 받아 개발을 진행하고 있습니다.  
 
 ## Update Log
-[...] ... Commit 참조 
-[2022/09/19] 쉘에서 사용가능한 툴(PortHack.exe, RootKit.exe) 구현
-[2022/09/19] MissionManager Class와 Mission Class의 초안 작성 및 getAdminMission 구현체 작성 
+[...] ... Commit 참조  
+[2022/09/19] 쉘에서 사용가능한 툴(PortHack.exe, RootKit.exe) 구현  
+[2022/09/19] MissionManager Class와 Mission Class의 초안 작성 및   getAdminMission 구현체 작성   
 
 ## Todo List 
 ### 기능
