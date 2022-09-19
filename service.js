@@ -7,8 +7,9 @@ import {Folder, File} from './filesystem.js'
  * @param {string} fname root Folder Name
  */
 class Service{
-    constructor(os, comp, fname, status){
+    constructor(os, comp, fname, status, terminal){
         this.os = os
+        this.terminal = terminal
         this.computer = comp 
         this.serviceName = fname
         this.computer.fileSystem.root.addFolder(new Folder(this.serviceName, 'root', 'rwx', 'r-x'))
@@ -50,8 +51,8 @@ class Service{
 }
 
 export class MailService extends Service{
-    constructor(os, comp, fname, status){
-        super(os, comp, fname, status)
+    constructor(os, comp, fname, status, terminal){
+        super(os, comp, fname, status, terminal)
         this.root.addFolder(new Folder('account', 'root', 'rwx', 'r-x'))
         this.accountFolder = this.root.searchFolder('account')
         this.initFileSystem()
@@ -182,6 +183,19 @@ export class MailService extends Service{
         }
         const inboxFolder = userFolder.searchFolder('inbox')
         inboxFolder.addFile(new File(`${inboxFolder.files.length}`, content, user.name, 'rwx', 'r-x'))
+        
+        // recieved한 컴퓨터 IP와 접속해 있는 IP가 일치할 때 
+        // 추후 읽은 메일, 안읽은 메일로 구별
+        const com = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        if(com.interface.ip == this.computer.interface.ip){
+            let msg = {
+                'is_command' : false, 
+                'output' : `new mail recieved!`,
+            }
+            
+            this.terminal.writeTerminal(msg)
+        }
+        
         return true
     }
 
@@ -212,8 +226,8 @@ export class MailService extends Service{
 
 
 export class MissionService extends Service{
-    constructor(os, comp, fname, status){
-        super(os, comp, fname, status)
+    constructor(os, comp, fname, status, terminal){
+        super(os, comp, fname, status, terminal)
         this.initFileSystem()
     }
 

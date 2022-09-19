@@ -9,7 +9,8 @@
 - [X] log 
 - [ ] Mail Service 
 - [ ] Mission Service
-- [ ] VIM Editor 구현 
+- [ ] 세부 미션 구현
+- [X] VIM Editor 구현 
 - [ ] 경로, 파일, 폴더 이름명에 특수문자 제거 
 - [X] computer restart 및 boot log 작성 -> syslog.log
 - [ ] passwd, shadow와 같은 유저 관리 파일 생성

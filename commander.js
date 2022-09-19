@@ -544,7 +544,7 @@ export class Commander{
 
     ps(){
         let output = `CPU : 1.3%\u2003MEM : ${this.os.usedRam}G / ${this.os.totalRam}G (${(this.os.usedRam / this.os.totalRam * 100).toFixed(1)}%)\n`
-        output += 'USER\u2003PID\u2003MEM\u2003STIME\u2003RTIME\u2003STATUS\u2003COMMAND\n'
+        output += 'USER\u2003PID\u2003MEM\u2003STIME\u2003\u2003RTIME\u2003STATUS\u2003COMMAND\n'
         this.os.exeProcessList.forEach( process => {
             output += process.status()
         })

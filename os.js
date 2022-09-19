@@ -27,12 +27,12 @@ export class OS{
 
     // 컴퓨터 객체 생성시 로그인 코드 ON 
     init(){
-        this.thisComputer = new Computer(myComputerNode, this)
+        this.thisComputer = new Computer(myComputerNode, this.terminal, this)
         this.thisComputer.connectedIP = this.thisComputer.interface.ip
         this.thisComputer.commander.login('tuuna', 'tuuna1234')
 
         computerNodeList.forEach( node => {
-            this.networkNodes.push(new Computer(node, this)) 
+            this.networkNodes.push(new Computer(node, this.terminal, this)) 
         })
     }
 

@@ -8,8 +8,9 @@ import {Log} from './log.js'
  * 명령어 실행 및 컴퓨터 환경 구성
  */
 export class Computer{
-    constructor(node, Os){
-        this.os = Os
+    constructor(node, terminal, os){
+        this.os = os
+        this.terminal = terminal
         this.interface = undefined
         this.services = [] 
         this.fileSystem = new FileSystem(true) 
@@ -25,6 +26,8 @@ export class Computer{
         this.connectedIP = undefined
         this.status = undefined
         this.config = undefined
+
+        // INIT
         this.load(node)
     }
 
@@ -156,20 +159,11 @@ export class Computer{
         // Service init 
         node.services.forEach( service => {
             if(service.name == 'mail'){
-                this.services.push(new MailService(this.os, this, "mail", service.status))
+                this.services.push(new MailService(this.os, this, "mail", service.status, this.terminal))
             }else if(service.name == 'mission'){
-                this.services.push(new MissionService(this.os, this, "mission", service.status))
+                this.services.push(new MissionService(this.os, this, "mission", service.status, this.terminal))
             }
         })
-        /*
-        // Service init 
-        this.services.push(
-            new MailService(this.os, this, "mail")
-        )
-        this.services.push(
-            new MissionService(this.os, this, "mission")
-        )
-        */
 
         // computer power on 
         this.turnOn()

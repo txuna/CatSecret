@@ -1,5 +1,5 @@
 import {PortHack, RootKit} from './tools.js'
-import { PROCESS_RAM } from './config.js'
+import { PROCESS_RAM, LOW_SECURITY } from './config.js'
 
 export class Program{
     constructor(os, terminal){
@@ -17,7 +17,7 @@ export class Program{
                     return `Exceed RAM..! Please Upgrade RAM!`
                 }
                 this.os.exeProcessList.push(
-                    new PortHack(this.os, this.terminal, command, user)
+                    new PortHack(this.os, this.terminal, command, user, LOW_SECURITY)
                 )
                 return `PortHack.exe is running!`
 
@@ -26,7 +26,7 @@ export class Program{
                     return `Exceed RAM..! Please Upgrade RAM!`
                 }
                 this.os.exeProcessList.push(
-                    new RootKit(this.os, this.terminal, command, user)
+                    new RootKit(this.os, this.terminal, command, user, LOW_SECURITY)
                 )
                 return `RootKit.exe is running!`
 
