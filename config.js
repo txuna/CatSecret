@@ -9,6 +9,10 @@ export const NONE_BIT = 0
 export const WRITE_BIT = 1 
 export const READ_BIT = 2
 
+export const NOT_START = 0 
+export const PROGRESSING = 1 
+export const FIN = 2
+
 export const PROCESS_RAM = {
     PortHack : 2,
     RootKit : 1.5
@@ -50,10 +54,6 @@ export const myComputerNode = {
     services:[
         {
             name : 'mail',
-            status : true
-        },
-        {
-            name : 'mission',
             status : true
         }
     ],
@@ -101,10 +101,6 @@ export const computerNodeList = [
             {
                 name : 'mail',
                 status : true
-            },
-            {
-                name : 'mission',
-                status : true
             }
         ],
         os : {
@@ -149,10 +145,6 @@ export const computerNodeList = [
             {
                 name : 'mail',
                 status : false
-            },
-            {
-                name : 'mission',
-                status : true
             }
         ],
         os : {

@@ -2,6 +2,7 @@ import {Computer} from './computer.js'
 import {myComputerNode, PROCESS_RAM} from './config.js'
 import {computerNodeList} from './config.js'
 import { Program } from './program.js'
+import { MissionManager, getAdminMission } from './mission.js'
 
 /**
  * 사용자의 명령 수행 및 컴퓨터 관리, 실행프로세스 관리 
@@ -21,8 +22,9 @@ export class OS{
         this.vim = vim
         this.terminal = terminal
         this.program = new Program(this, this.terminal)
-
+        this.missionManager = new MissionManager()
         this.init()
+        this.loadMission()
     }
 
     // 컴퓨터 객체 생성시 로그인 코드 ON 
@@ -34,6 +36,12 @@ export class OS{
         computerNodeList.forEach( node => {
             this.networkNodes.push(new Computer(node, this.terminal, this)) 
         })
+    }
+
+    loadMission(){
+        this.missionManager.append(
+            new getAdminMission(this, 'Robber Root!', '13.23.27.8', 'root')
+        )
     }
 
     /**
@@ -98,8 +106,10 @@ export class OS{
             tmpRam += process.usedRam
         })
         this.usedRam = tmpRam
-
         this.endProcess()
+
+        this.missionManager.update()
+
         /*
         if(this.isConnected){
             this.connectedComputer.update()

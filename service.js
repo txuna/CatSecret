@@ -225,17 +225,3 @@ export class MailService extends Service{
 }
 
 
-export class MissionService extends Service{
-    constructor(os, comp, fname, status, terminal){
-        super(os, comp, fname, status, terminal)
-        this.initFileSystem()
-    }
-
-    initFileSystem(){
-
-    }
-
-    update(){
-
-    }
-}

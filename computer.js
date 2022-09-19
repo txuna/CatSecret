@@ -1,7 +1,7 @@
 import {LOW_SECURITY, MIDDLE_SECURITY, HIGH_SECURITY} from './config.js'
 import {FileSystem, File, Folder} from './filesystem.js'
 import {Commander} from './commander.js'
-import {MailService, MissionService} from './service.js'
+import {MailService} from './service.js'
 import {User} from './user.js'
 import {Log} from './log.js'
 /**
@@ -160,8 +160,6 @@ export class Computer{
         node.services.forEach( service => {
             if(service.name == 'mail'){
                 this.services.push(new MailService(this.os, this, "mail", service.status, this.terminal))
-            }else if(service.name == 'mission'){
-                this.services.push(new MissionService(this.os, this, "mission", service.status, this.terminal))
             }
         })
 
@@ -204,7 +202,6 @@ export class Computer{
         this.log.writeLog('Checking.... Filesystem:\u2003[ OK ]', 'system')
         this.log.writeLog('Checking Services...', 'system')
         this.log.writeLog('Service Mail...:\u2003[ OK ]', 'system')
-        this.log.writeLog('Service Mission...:\u2003[ OK ]', 'system')
         this.log.writeLog('Checking System File...\u2003[ OK ]', 'system')
         this.log.writeLog('Starting up Program...\u2003[ OK ]', 'system')
     }
