@@ -104,7 +104,7 @@ export class PortHack extends Tool{
  */
 export class RootKit extends Tool{
     constructor(os, terminal, command, user){
-        super(os, 5 * FPS, terminal, 'RootKit', 1.3, command, user)
+        super(os, 15 * FPS, terminal, 'RootKit', 1.3, command, user)
         this.runningTime = 0
         this.run()
     }
