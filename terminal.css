@@ -66,9 +66,63 @@ a {
 #container{
     display:flex; 
     justify-content: center;
-    align-items: center;
     height:100%;
+    flex-direction: row;
+    margin:12px;
+}
+
+.mission__container{
+    display:flex;
     flex-direction: column;
+    
+}
+
+.mission__header{
+    text-align: center;
+    font-size:36px;
+    font-weight: bold;
+}
+
+.mission__list{
+    display:flex;
+    flex-direction: column;
+    padding:6px;
+    background-color: #181818;
+    border-radius: 4px;
+    overflow-y: scroll;
+    width:350px;
+}
+
+.mission{
+    display:flex; 
+    flex-direction: column;
+    border:1px solid white;
+    padding:12px;
+    margin:12px;
+    color:white;
+    border-radius: 4px;
+    background:#34363A;
+}
+
+.mission span{
+    display:block;
+}
+
+.mission__title{
+    text-align: center;
+    padding:6px;
+    font-size:18px;
+    word-break: break-word;
+}
+
+.mission__description{
+    font-size:14px;
+    word-break: break-word;
+}
+
+.title{
+    text-align: center;
+    margin:24px;
 }
 
 .title span{

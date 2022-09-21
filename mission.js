@@ -5,6 +5,7 @@ import { FIN, NOT_START, PROGRESSING } from "./config.js"
  */
 export class MissionManager{
     constructor(os, terminal){
+        this.htmlMissions = document.querySelector(".mission__list")
         this.os = os
         this.terminal = terminal 
         this.missionList = [] /* Mission Class */
@@ -14,11 +15,46 @@ export class MissionManager{
         this.missionList.push(mission)
     }
 
+    createMissionHTML(mission){
+        this.htmlMissions.innerHTML = ''
+        let missionDiv = document.createElement('div')
+        missionDiv.classList.add('mission')
+        let div = document.createElement('div')
+
+        let spanTitle = document.createElement('span')
+        spanTitle.classList.add('mission__title')
+
+        let spanDescription = document.createElement('span')
+        spanDescription.classList.add('mission__description')
+
+        let status = mission.status==FIN ? '[완료]' : '[진행중]'
+        spanTitle.innerText = `${status}${mission.name}`
+        
+        spanDescription.innerText = `${mission.description}`
+
+        if(mission.status == FIN){
+            let del = document.createElement('del')
+            del.appendChild(spanTitle)
+            del.appendChild(spanDescription)
+            div.appendChild(del)
+        }else{
+            div.appendChild(spanTitle)
+            div.appendChild(spanDescription)
+        }
+        missionDiv.appendChild(div)
+        this.htmlMissions.appendChild(missionDiv)
+    }
+
+
     update(){
         this.missionList.forEach( mission => {
             if(mission.status == PROGRESSING){
                 mission.update()
             }
+        })
+
+        this.missionList.forEach(mission => {
+            this.createMissionHTML(mission)
         })
     }
 }
@@ -27,9 +63,10 @@ export class MissionManager{
  * update함수가 매 프레임 돌면서 is_finished를 체크한다. 
  */
 class Mission{
-    constructor(os, name, status){
+    constructor(os, name, description, status){
         this.os = os
         this.name = name
+        this.description = description
         this.status = status
     }
 
@@ -61,8 +98,8 @@ export class getAdminMission extends Mission{
      * @param {String} targetIP 
      * @param {String} targetID 
      */
-    constructor(os, name, targetIP, targetID){
-        super(os, name, PROGRESSING)
+    constructor(os, name, description, targetIP, targetID){
+        super(os, name, description, PROGRESSING)
         this.targetComputer = this.os.getComputerNodeFromIP(targetIP)
         this.targetIP = targetIP 
         this.targetID = targetID

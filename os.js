@@ -40,7 +40,7 @@ export class OS{
 
     loadMission(){
         this.missionManager.append(
-            new getAdminMission(this, 'Robber Root!', '13.23.27.8', 'root')
+            new getAdminMission(this, 'Robber Root!', 'IP : 13.23.27.8에 접속하여 root권한을 탈취하라!', '13.23.27.8', 'root')
         )
     }
 
