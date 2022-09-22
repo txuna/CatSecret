@@ -400,7 +400,6 @@ export class Commander{
                     return `connect: '${ip}': computer turned off!`
                 }
                 for(const port of node.ports){
-                    console.log(port)
                     if(port.number == 22){
                         if(port.status != true){
                             return `connect: '${ip}': 22 port is closed!`

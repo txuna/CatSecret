@@ -388,12 +388,16 @@ export class Computer{
     }
 
     /**
-     * 현재 currentPath를 기반으로 인덱스 배열로 반환 - 단 파일
-     * @param {String} path 입력받은 경로
-     * @returns list
+     * 
+     * @param {String} path 주소 문자열
+     * @returns Folder Object or null
      */
-    getFileNavigationFromPath(path){
-
+    getFolderFromPath(path){
+        const navigation = this.getFolderNavigationFromPath(path)
+        if(navigation == null){
+            return null
+        }
+        return this.getFolderAtDepthWithParam(navigation)
     }
 
     /**
@@ -454,6 +458,19 @@ export class Computer{
     getFolderAtDepth(){
         let folder = this.fileSystem.root
         for(const element of this.navigationPath){
+            folder = folder.folders[element]
+        }
+        return folder
+    }
+
+    /**
+     * this.navigationPath을 기반으로 해당 폴더 반환
+     * 오버로딩 만약 네비게이션이 주어진다면 
+     * @returns navigationPath에 의한 Folder 반환
+     */
+    getFolderAtDepthWithParam(navigation){
+        let folder = this.fileSystem.root
+        for(const element of navigation){
             folder = folder.folders[element]
         }
         return folder

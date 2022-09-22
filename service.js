@@ -192,7 +192,6 @@ export class MailService extends Service{
                 'is_command' : false, 
                 'output' : `new mail recieved!`,
             }
-            
             this.terminal.writeTerminal(msg)
         }
         

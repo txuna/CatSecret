@@ -16,7 +16,6 @@ export class MissionManager{
     }
 
     createMissionHTML(mission){
-        this.htmlMissions.innerHTML = ''
         let missionDiv = document.createElement('div')
         missionDiv.classList.add('mission')
         let div = document.createElement('div')
@@ -53,6 +52,7 @@ export class MissionManager{
             }
         })
 
+        this.htmlMissions.innerHTML = ''
         this.missionList.forEach(mission => {
             this.createMissionHTML(mission)
         })
@@ -119,32 +119,55 @@ export class getAdminMission extends Mission{
     }
 }
 
-class FileUploadMission extends Mission{
-    constructor(){
-
+export class FileUploadMission extends Mission{
+    constructor(os, name, description, filename, targetPath, targetIP){
+        super(os, name, description, PROGRESSING)
+        this.filename = filename 
+        this.targetPath = targetPath
+        this.targetIP = targetIP
+        this.targetComputer = this.os.getComputerNodeFromIP(targetIP)
     }
 
     finish(){
-
+        this.status = FIN
+        console.log(`Mission:'${this.name}' is completed!`)
     }
 
+    // targetPath에 해당 파일이 있으면 Complete
     isComplete(){
-        
+        const targetFolder = this.targetComputer.getFolderFromPath(this.targetPath)
+        if(targetFolder == null){
+            return
+        }
+        if(targetFolder.searchFile(this.filename)){
+            this.finish()
+        }
     }
 
 }
 
-class FileDeleteMission extends Mission{
-    constructor(){
-
+export class FileDeleteMission extends Mission{
+    constructor(os, name, description, filename, targetPath, targetIP){
+        super(os, name, description, PROGRESSING)
+        this.filename = filename 
+        this.targetPath = targetPath
+        this.targetIP = targetIP
+        this.targetComputer = this.os.getComputerNodeFromIP(targetIP)
     }
 
     finish(){
-
+        this.status = FIN
+        console.log(`Mission:'${this.name}' is completed!`)
     }
 
     isComplete(){
-        
+        const targetFolder = this.targetComputer.getFolderFromPath(this.targetPath)
+        if(targetFolder == null){
+            return
+        }
+        if(!targetFolder.searchFile(this.filename)){
+            this.finish()
+        }
     }
 
 }

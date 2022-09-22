@@ -31,11 +31,11 @@ export class Game{
             }
         })
 
-        this.vim.vimTextarea.addEventListener('keypress', ({keyCode}) => {
-            if(keyCode == 110 && this.vim.mode == INSERT){
+        this.vim.vimTextarea.addEventListener('keydown', (e) => {
+            if(e.key == 'Escape' && this.vim.mode == INSERT){
                 this.vim.setNormalVim()
             }
-            else if(keyCode == 105 && this.vim.mode == NORMAL){
+            else if(e.key == 'i' && this.vim.mode == NORMAL){
                 this.vim.setInsertVim()
             }
         })

@@ -2,7 +2,7 @@ import {Computer} from './computer.js'
 import {myComputerNode, PROCESS_RAM} from './config.js'
 import {computerNodeList} from './config.js'
 import { Program } from './program.js'
-import { MissionManager, getAdminMission } from './mission.js'
+import { MissionManager, getAdminMission, FileUploadMission, FileDeleteMission } from './mission.js'
 
 /**
  * 사용자의 명령 수행 및 컴퓨터 관리, 실행프로세스 관리 
@@ -40,7 +40,29 @@ export class OS{
 
     loadMission(){
         this.missionManager.append(
-            new getAdminMission(this, 'Robber Root!', 'IP : 13.23.27.8에 접속하여 root권한을 탈취하라!', '13.23.27.8', 'root')
+            new getAdminMission(this, 
+                'Robber Root!', 
+                'IP : 13.23.27.8에 접속하여 root권한을 탈취하라!', 
+                '13.23.27.8', 
+                'root')
+        )
+
+        this.missionManager.append(
+            new FileUploadMission(this, 
+                'Backdoor Upload!', 
+                'IP : 13.23.27.8에 접속하여 /root 폴더에 backdoor파일을 업로드하여라!', 
+                'backdoor',
+                '/root',
+                '13.23.27.8')
+        )
+
+        this.missionManager.append(
+            new FileDeleteMission(this,
+                'Delete README.md!',
+                'IP : 13.23.27.8에 접속하여 /root 폴더에서 README.md파일을 삭제해라!',
+                'README.md',
+                '/root',
+                '13.23.27.8')
         )
     }
 
