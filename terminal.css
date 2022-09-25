@@ -57,6 +57,7 @@ body {
     font-family: 'Open Sans', sans-serif;
     cursor: default;  
     height:100vh; 
+    overflow: hidden;
 }
 
 a {
@@ -69,6 +70,56 @@ a {
     height:100%;
     flex-direction: row;
     margin:12px;
+}
+
+.browser__container{
+
+}
+
+.browser__topbar{
+
+}
+
+.browser__view{
+    
+}
+
+.status__container{
+    display:flex;
+    flex-direction: column;
+}
+
+.status__header{
+    text-align: center;
+    font-size:36px;
+    font-weight: bold;
+}
+
+.status{
+    width: 350px; 
+    background-color: #181818;
+    color:#EEE;
+    border-radius: 4px;
+}
+
+.status div{
+    display:flex; 
+    flex-direction: column;
+    margin:12px;
+}
+
+.status div span{
+    font-size:14px;
+    margin:2px;
+    margin-left:12px;
+    
+}
+
+.status div span:first-child{
+    font-weight: bold;
+    margin-bottom: 12px;
+    margin-left: 0px;
+    font-size:18px;
 }
 
 .mission__container{
@@ -138,6 +189,8 @@ a {
     display:flex; 
     flex-direction: column;
     overflow-x: hidden;
+    margin:24px;
+    padding: 12px;
 }
 
 .vim textarea{

@@ -60,6 +60,19 @@ export const myComputerNode = {
     os : {
         version : '1.3.2',
         name : 'Secure OS'
+    },
+    status:{
+        ram : {
+            name : 'Samsung DDR4 4G',
+            size : 4
+        },
+        cpu : {
+            name : 'Intel(R) Core(TM) i7-7700K @ 4.20GHz',
+            size : 0
+        },
+        balance : 5000,
+        hacking : 1,
+        name : 'tuuna'
     }
 }
 

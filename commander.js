@@ -277,14 +277,12 @@ export class Commander{
         let output = ''
         output += `Computer Scanning...\n`
         output += `Secutiry Level:\u2003${this.computer.securityLevel}\n`
-        output += `RAM:\u2003${this.os.totalRam}GB\n`
-        output += `CPU:\u2003Intel(R) Core(TM) i7-7700K @ 4.20GHz\n`
-        output += `Port Scanning...\n`
+        output += `\nPort Scanning...\n`
         this.computer.ports.forEach( port => {
             let status = port.status? 'OPEN' : 'CLOSE'
             output += `PORT ${port.number}:\u2003[ ${status} ]\n`
         })
-        output += `Service Scanning...\n`
+        output += `\nService Scanning...\n`
         this.computer.services.forEach( service => {
             let status = service.status? 'RUNNING' : 'OFF'
             output += `Service ${service.serviceName}:\u2003[ ${status} ]\n`
@@ -542,7 +540,7 @@ export class Commander{
     }
 
     ps(){
-        let output = `CPU : 1.3%\u2003MEM : ${this.os.usedRam}G / ${this.os.totalRam}G (${(this.os.usedRam / this.os.totalRam * 100).toFixed(1)}%)\n`
+        let output = `CPU : 1.3%\u2003MEM : ${this.os.ram.used}G / ${this.os.ram.size}G (${(this.os.ram.used / this.os.ram.size * 100).toFixed(1)}%)\n`
         output += 'USER\u2003PID\u2003MEM\u2003STIME\u2003\u2003RTIME\u2003STATUS\u2003COMMAND\n'
         this.os.exeProcessList.forEach( process => {
             output += process.status()

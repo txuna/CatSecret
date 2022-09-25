@@ -3,6 +3,7 @@ import {myComputerNode, PROCESS_RAM} from './config.js'
 import {computerNodeList} from './config.js'
 import { Program } from './program.js'
 import { MissionManager, getAdminMission, FileUploadMission, FileDeleteMission } from './mission.js'
+import { Status } from './status.js'
 
 /**
  * 사용자의 명령 수행 및 컴퓨터 관리, 실행프로세스 관리 
@@ -11,10 +12,20 @@ import { MissionManager, getAdminMission, FileUploadMission, FileDeleteMission }
 export class OS{
     constructor(vim, terminal){
         this.networkNodes = []
-        this.baseRam = 4
-        this.additionalRam = 0
-        this.usedRam = 0
-        this.totalRam = this.baseRam + this.additionalRam
+        this.ram = {
+            name : myComputerNode.status.ram.name, 
+            size : myComputerNode.status.ram.size,
+            used : 0
+        }
+        this.cpu = {
+            name : myComputerNode.status.cpu.name,
+            size : myComputerNode.status.cpu.size, 
+            used : 0
+        }
+        this.balance = myComputerNode.status.balance
+        this.hacking = myComputerNode.status.hacking
+        this.name = myComputerNode.status.name
+
         this.exeProcessList = [] 
         this.thisComputer = false
         this.connectedComputer = undefined
@@ -23,6 +34,7 @@ export class OS{
         this.terminal = terminal
         this.program = new Program(this, this.terminal)
         this.missionManager = new MissionManager()
+        this.statusManager = new Status(this)
         this.init()
         this.loadMission()
     }
@@ -127,7 +139,7 @@ export class OS{
             process.update()
             tmpRam += process.usedRam
         })
-        this.usedRam = tmpRam
+        this.ram.used = tmpRam
         this.endProcess()
 
         this.missionManager.update()
@@ -139,5 +151,6 @@ export class OS{
             this.thisComputer.update()
         }
         */
+        this.statusManager.update()
     }
 }
