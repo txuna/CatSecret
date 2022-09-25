@@ -1,3 +1,4 @@
+import { PROCESS_RAM } from "./config.js"
 
 const FPS = 60
 
@@ -30,14 +31,58 @@ class Tool{
         this.thisIP = undefined
         this.runningTime = 0
         this.canLevel = canLevel
+        this.computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+    }
+
+    isRoot(){
+        if(this.computer.logOnUser == 'root'){
+            return true
+        }else{
+            let msg = {
+                'is_command' : false, 
+                'output' : `${this.toolName}: Permission denied`,
+            }
+            this.terminal.writeTerminal(msg)
+            this.writeLogWithIP(`Failed run program: '${this.command}'`, 'history')
+            return false
+        }
+    }
+
+    verifyPermission(){
+        this.isRunning = false
+        if(this.computer.securityLevel > this.canLevel){
+            let msg = {
+                'is_command' : false, 
+                'output' : `${this.toolName}: Need Higher Permission...!`,
+            }
+            this.terminal.writeTerminal(msg)
+            this.writeLogWithIP(`Failed run program: '${this.command}'`, 'history')
+            return false
+        }
+        if(this.computer.interface.ip != this.thisIP){
+            let msg = {
+                'is_command' : false, 
+                'output' : `${this.toolName}: Network Error...!`,
+            }
+            this.terminal.writeTerminal(msg)
+            this.writeLogWithIP(`Failed run program: '${this.command}'`, 'history')
+            return false
+        }
+        return true
+    }
+
+    writeLogWithIP(msg, type){
+        //const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
     }
 
     run(){
-        const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
-        this.thisIP = computer.interface.ip
+        //const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        this.thisIP = this.computer.interface.ip
         this.isRunning = true
         let date = new Date()
         this.startTime = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+        this.writeLogWithIP(`run program: '${this.command}'`, 'history')
     }
 
     update(){
@@ -68,51 +113,31 @@ class Tool{
  * CLOSE되어있는 portNumber를 OPEN하는 클래스
  */
 export class PortHack extends Tool{
-    constructor(os, terminal, command, user, canLevel){
-        super(os, 10 * FPS, terminal, 'PortHack', 2, command, user, canLevel)
-        this.run()
+    constructor(os, terminal, command, user, canLevel, number){
+        super(os, 10 * FPS, terminal, 'PortHack', PROCESS_RAM.PortHack, command, user, canLevel)
+        this.number = number
         this.canLevel = canLevel
+        this.run()
     }
 
     // PORT OPEN
     finished(){
         this.isRunning = false
-        const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
-        if(computer.securityLevel > this.canLevel){
-            let msg = {
-                'is_command' : false, 
-                'output' : `PortHack.exe: Need Higher Permission...!`,
-            }
-            this.terminal.writeTerminal(msg)
+        //const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        if(!this.verifyPermission()){
             return
         }
-        if(computer.interface.ip != this.thisIP){
-            let msg = {
-                'is_command' : false, 
-                'output' : `PortHack.exe: Network Error...!`,
-            }
-            this.terminal.writeTerminal(msg)
+        if(!this.isRoot()){
             return
         }
+        this.computer.openPort(this.number)
+        let msg = {
+            'is_command' : false, 
+            'output' : `PortHack.exe: Successfully open Port ${this.number}`,
+        }
+        this.terminal.writeTerminal(msg)
     }
 
-    /*
-    update(){
-        if(!this.isRunning){
-            return
-        }
-        if(this.runningTime == this.programTime){
-            let msg = {
-                'is_command' : false, 
-                'output' : `Program: '${this.toolName}' is Finished!`,
-            }
-            this.terminal.writeTerminal(msg)
-            this.finished()
-        }else{
-            this.runningTime+=1
-        }
-    }
-    */
 }
 
 /**
@@ -120,32 +145,48 @@ export class PortHack extends Tool{
  */
 export class RootKit extends Tool{
     constructor(os, terminal, command, user, canLevel){
-        super(os, 15 * FPS, terminal, 'RootKit', 1.3, command, user, canLevel)
+        super(os, 15 * FPS, terminal, 'RootKit', PROCESS_RAM.RootKit, command, user, canLevel)
         this.run()
     }
 
     // GET ROOT
     finished(){
-        const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
+        //const computer = this.os.isConnected ? this.os.connectedComputer : this.os.thisComputer
         this.isRunning = false
-        if(computer.securityLevel > this.canLevel){
-            let msg = {
-                'is_command' : false, 
-                'output' : `RootKit.exe: Need Higher Permission...!`,
-            }
-            this.terminal.writeTerminal(msg)
+        if(!this.verifyPermission()){
             return
         }
-        if(computer.interface.ip != this.thisIP){
-            let msg = {
-                'is_command' : false, 
-                'output' : `RootKit.exe: Network Error...!`,
-            }
-            this.terminal.writeTerminal(msg)
+        this.computer.loginRoot()
+        //let comp_msg = `[${this.computer.logOnUser}@${this.computer.interface.ip} ${this.computer.getFullPathAtDepth()}]`
+        this.terminal.computer.innerText = `[${this.computer.logOnUser}@${this.computer.interface.ip} ${this.computer.getFullPathAtDepth()}]# `
+        let msg = {
+            'is_command' : false, 
+            'output' : `RootKit.exe: Successcfully get root!`,
+        }
+        this.terminal.writeTerminal(msg)
+    }
+}
+
+export class MineHack extends Tool{
+    constructor(os, terminal, command, user, canLevel){
+        super(os, 3 * FPS, terminal, 'MineHack', PROCESS_RAM.MineHack, command, user, canLevel)
+        this.run()
+    }
+    
+    //GET BALANCE
+    finished(){
+        this.isRunning = false
+        if(!this.verifyPermission()){
             return
         }
-        computer.loginRoot()
-        let comp_msg = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]`
-        this.terminal.computer.innerText = `[${computer.logOnUser}@${computer.interface.ip} ${computer.getFullPathAtDepth()}]# `
+        if(!this.isRoot()){
+            return
+        }
+        this.os.earnBalance(37.5)
+        let msg = {
+            'is_command' : false, 
+            'output' : `MineHack.exe: Successcfully earn Balance 37.5$`,
+        }
+        this.terminal.writeTerminal(msg)
     }
 }

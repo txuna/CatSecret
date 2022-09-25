@@ -20,17 +20,6 @@ export class Commander{
         this.computer.log.writeLog(`[${this.computer.connectedIP}] [${this.computer.logOnUser}] ${msg}`, `${type}`)
     }
 
-    searchTree(top){
-
-    }
-    // 폴더 구성을 tree형태로 보여준다. 
-    tree(){
-        const currentFolder = this.computer.currentPath
-        let output = `${currentFolder.name}`
-        
-        return output
-    }
-
     // service에 대해 세부설정을 진행한다. root만 가능
     systemd(serviceName, option){
         const user = this.computer.getUser(this.computer.logOnUser)
@@ -540,6 +529,7 @@ export class Commander{
     }
 
     ps(){
+        this.writeLogWithIP(`run command 'ps'`, 'history')
         let output = `CPU : 1.3%\u2003MEM : ${this.os.ram.used}G / ${this.os.ram.size}G (${(this.os.ram.used / this.os.ram.size * 100).toFixed(1)}%)\n`
         output += 'USER\u2003PID\u2003MEM\u2003STIME\u2003\u2003RTIME\u2003STATUS\u2003COMMAND\n'
         this.os.exeProcessList.forEach( process => {

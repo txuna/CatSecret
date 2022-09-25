@@ -106,7 +106,7 @@ export class OS{
             return `Invalid User`
         }
         let flag = false 
-        for(const name of ['PortHack.exe', 'RootKit.exe']){
+        for(const name of ['PortHack.exe', 'RootKit.exe', 'MineHack.exe']){
             if(command.split(' ')[0].includes(name)){
                 flag = true
             }
@@ -124,8 +124,10 @@ export class OS{
             }
             return result
         }
+    }
 
-        
+    earnBalance(balance){
+        this.balance += balance
     }
 
     // 프로세스 상태가 종료된것들 종료

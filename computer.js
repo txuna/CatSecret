@@ -31,6 +31,22 @@ export class Computer{
         this.load(node)
     }
 
+    openPort(number){
+        this.ports.forEach( port => {
+            if(port.number == number){
+                port.openPort()
+            }
+        })
+    }
+
+    closePort(number){
+        this.ports.forEach( port => {
+            if(port.number == number){
+                port.closePort()
+            }
+        })
+    }
+
     /**
      * 유저마다의 폴더 생성 root 제외 
      */

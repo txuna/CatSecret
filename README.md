@@ -11,15 +11,17 @@
 - [X] 유저 별로 권한 확인하기 
 - [ ] redirection shell 구현 
 - [X] log 
-- [ ] Mail Service 
+- [X] Mail Service 
 - [X] Mission Class 구현
-- [ ] 세부 미션 구현
+- [X] 세부 미션 구현
 - [X] VIM Editor 구현 
 - [ ] 경로, 파일, 폴더 이름명에 특수문자 제거 
 - [X] computer restart 및 boot log 작성 -> syslog.log
 - [ ] passwd, shadow와 같은 유저 관리 파일 생성
 - [X] 프로그램의 기본적인 형태 구현 - PortHack, RootKit
 - [ ] wget을 통한 상점 기능 구현하기
+- [X] 채굴 명령어를 통해 돈 송금
+- [ ] 프로그램 로깅 남기기
 
 ### 명령어 
 - [X] help      도움말을 출력한다. 

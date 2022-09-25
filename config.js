@@ -15,7 +15,8 @@ export const FIN = 2
 
 export const PROCESS_RAM = {
     PortHack : 2,
-    RootKit : 1.5
+    RootKit : 1.5,
+    MineHack : 3.7
 }
 
 export const myComputerNode = {
