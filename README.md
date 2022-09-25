@@ -112,25 +112,37 @@ FileStat Class는 Folder Class와 File Class를 상속하고 있으며 사이즈
 ```
 
 ## OS System 
-README.md 작성중... 
+Computer마다 OS가 있는 것이 아닌 하나의 OS에 여러 Computer Class를 연결하였다. 
+즉, 하나의 OS는 사용자를 위한 OS이며 네트워크에 연결된 AI Computer는 OS를 가지지 않는다.
+OS는 isConnected Property를 통해 현재 사용자의 Computer가 아닌 다른 네트워크의 Computer에 연결되었는지를 확인하며 해당 Property에 따라 실행 및 프로그램의 동작되는 Computer가 달라진다. 
+
+Terminal, Vim, Status, Mission의 HTML을 렌더링하며 매 프레임마다 update를 시켜준다.  터미널로부터 입력받은 문자열이 Computer의 Command인지 아니면 OS에 해당하는 Program인지를 확인함. 
+Command일시 Computer Class에 전달하며 Program일시 OS자체적으로 관리하여 매 프레임마다 update함수 호출 
+또한 플레이어의 CPU, RAM, Balance등을 관리한다. 
+실질적으로 Game객체과 Computer객체와의 중간역할 
 
 ## Computer System 
-README.md 작성중...
+Computer Class는 Command, FileSystem, Services, log, Port등을 관리하며 실질적인 Computer의 컴퓨터를 진행한다. OS Class로 부터 받은 Command문자열을 Command 객체에게 전달해주어 명령어의 실행을 도와주며 처리과정또한 Computer Class가 처리한다. 해당 Class는 기본적인 파일 관리(삭제,  생성) 및 사용자 관리, 포트관리, 권한관리를 진행한다. 
 
 ## Program System 
-README.md 작성중 
+Program Class는 사용자가 입력하는 프로그램의 실행을 돕는 Class이다.  
+사용자로부터 Program의 사용 요청이 들어오면 Ram사용유무와 인자유무를 판단하고 Tools Class로부터 맞는 Tools Object를 생성하며 os의 프로세스 관리 리스트에 추가한다. 추가된 Tools Object는 매 프레임마다 update하여 상태를 확인한다. 
+현재 사용가능한 프로그램으로는 RootKit, PortHack, MineHack이 존재한다. 
 
 ## Service System 
-README.md 작성중 
+Service Class로는 일반 리눅스로치면 Daemon의 역할을 진행하고 있다. 자체적인 Filesystem을 가지고 있으며 백그라운드환경에서 실행된다. Service의 예로서는 mail Class가 존재한다. Mail Class는 네트워크에 연결된 PC끼리 메일을 주고 받을 수 있는 서비스이다. 서비스를 관리하는 명령어로는 systemd가 있다. 
 
 ## Commander System 
-README.md 작성중 
+명령어를 통해 Computer 객체를 조작할 수 있는 Class이다. 해당 Class는 각 각의 Computer Class에 객체로서 생성되며 일반적인 리눅스 명령어를 포함하고 있다. 해당 명령어의 결과를 통해 computer의 property를 변경한다. 
 
 ## Log System 
-README.md 작성중 
+해당 Class는 사용자의 입력 및 백그라운드에서 실행되는 Daemon의 모든 logging을 남기는 Class이다. 해당 Class에 존재하는 로그파일로는 auth.log, history.log, syslog.log파일이 존재한다. 
 
 ## Terminal System 
-README.md 작성중 
+터미널의 UI단을 수정하는 Class이다. 사용자의 인터렉션을 통해 terminal class를 이용하여 터미널의 내용을 수정할 수 있다. 
+
+## Vim System 
+VIM은 터미널화면을 잠시 닫은 상태에서 실행이 가능하다. 실제 리눅스 VIM EDITOR처럼 되어 있으며 파일의 편집 및 생성이 가능하다. VIM에는 Insert모드와 Normal모드가 존재하며 Insert Mode에서만 편집이 가능하다. Normal모드에서는 VIM EDITOR를 나가서 Terminal Mode로 변경이 가능하다.
 
 # Image 
 ### Cat Secret Main Screen
