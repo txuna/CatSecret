@@ -69,19 +69,37 @@ a {
     justify-content: center;
     height:100%;
     flex-direction: row;
-    margin:12px;
 }
 
-.browser__container{
-
+#left__container{
+    display:flex; 
+    flex-direction: column;
 }
 
-.browser__topbar{
-
+.notepad__container{
+    margin-top:12px;
 }
 
-.browser__view{
-    
+.notepad__header{
+    text-align: center;
+    font-size:36px;
+    font-weight: bold;
+}
+
+.notepad{
+    border:1px solid #181818;
+    width:350px; 
+    height:350px;
+    border-radius: 4px;
+}
+
+.notepad textarea{
+    width:350px; 
+    height:350px;
+    resize:none;
+    background:#181818;
+    color:white;
+    padding:12px;
 }
 
 .status__container{
@@ -142,6 +160,7 @@ a {
     border-radius: 4px;
     overflow-y: scroll;
     width:350px;
+    height:750px;
 }
 
 .mission{
